@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+
+  --color-brand-bg: #F4F6FA;
+  --color-brand-bg-subtle: #E8EDF4;
+  --color-brand-heading: #24242A;
+  --color-brand-orange: #E66A2C;
+  --color-brand-yellow: #FFD64F;
+  --color-brand-body: #777777;
+  --color-brand-white: #FFFFFF;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+}
+
+:root {
+  --background: #F4F6FA;
+  --foreground: #24242A;
+  --card: #FFFFFF;
+  --card-foreground: #24242A;
+  --border: #E2E8F0;
+  --muted: #E8EDF4;
+  --muted-foreground: #777777;
+  --primary: #E66A2C;
+  --primary-foreground: #FFFFFF;
+  --secondary: #FFD64F;
+  --secondary-foreground: #24242A;
+  --accent: #E8EDF4;
+  --accent-foreground: #E66A2C;
+
+  --brand-orange: #E66A2C;
+  --brand-yellow: #FFD64F;
+  --brand-dark: #24242A;
+  --brand-gray: #777777;
+  --brand-bg: #F4F6FA;
+  --brand-subtle: #E8EDF4;
+}
+
+.dark {
+  --background: #18181B;
+  --foreground: #F4F6FA;
+  --card: #24242A;
+  --card-foreground: #F4F6FA;
+  --border: #333338;
+  --muted: #2E2E35;
+  --muted-foreground: #A1A1AA;
+  --primary: #F97316;
+  --primary-foreground: #FFFFFF;
+  --secondary: #FFD64F;
+  --secondary-foreground: #18181B;
+  --accent: #2E2E35;
+  --accent-foreground: #F97316;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Custom Design Reference utilities */
+.bg-brand-bg {
+  background-color: #F4F6FA;
+}
+
+.bg-brand-subtle {
+  background-color: #E8EDF4;
+}
+
+.text-brand-heading {
+  color: #24242A;
+}
+
+.text-brand-orange {
+  color: #E66A2C;
+}
+
+.bg-brand-orange {
+  background-color: #E66A2C;
+}
+
+.bg-brand-yellow {
+  background-color: #FFD64F;
+}
+
+.text-brand-body {
+  color: #777777;
+}
+
+.border-brand-subtle {
+  border-color: #E8EDF4;
+}
+
+/* Smooth road dashed animation */
+@keyframes dashScroll {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+.animate-road-dash {
+  animation: dashScroll 1.5s linear infinite;
+}
