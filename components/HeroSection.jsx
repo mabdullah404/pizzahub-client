@@ -2,37 +2,33 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { DeliveryPath } from "@/components/DeliveryPath";
+import { ArrowRight, Flame } from "lucide-react";
 import { CustomerAvatars } from "@/components/CustomerAvatars";
 import { FeaturePills } from "@/components/FeaturePills";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-[#F4F6FA] dark:bg-[#18181B] transition-colors pt-12 sm:pt-16 lg:pt-20 pb-0">
-      {/* Container framing matching reference */}
+    <section className="relative overflow-hidden bg-[#F4F6FA] dark:bg-[#18181B] transition-colors pt-8 sm:pt-12 lg:pt-16 pb-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        {/* Curved Delivery Road SVG illustration */}
-        <DeliveryPath />
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center min-h-[500px] lg:min-h-[560px] pb-16 lg:pb-20 relative z-20">
-          {/* Left Column: Headlines & CTA (Matches Reference) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center pb-12 sm:pb-16 lg:pb-20">
+          {/* Left Column: Typography & Action Buttons */}
           <div className="lg:col-span-6 space-y-6 text-left">
             {/* Small Eyebrow */}
-            <div className="inline-block">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] shadow-2xs">
+              <Flame className="w-3.5 h-3.5 text-[#E66A2C]" />
               <span className="text-[11px] font-extrabold text-[#777777] dark:text-[#A1A1AA] uppercase tracking-widest">
                 FRESHLY BAKED, MADE WITH LOVE
               </span>
             </div>
 
-            {/* Giant Bold Headline - Match Reference */}
+            {/* Main Headline */}
             <div className="space-y-2">
-              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[78px] font-black text-[#24242A] dark:text-white tracking-tight leading-[1.02]">
+              <h1 className="text-4xl sm:text-6xl lg:text-[72px] font-black text-[#24242A] dark:text-white tracking-tight leading-[1.05]">
                 Pizza Cravings?
               </h1>
 
               {/* Orange Subheading */}
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-black text-[#E66A2C] tracking-tight leading-snug">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#E66A2C] tracking-tight leading-snug">
                 Get It Delivered Hot & Fresh!
               </h2>
             </div>
@@ -43,11 +39,11 @@ export function HeroSection() {
               Delivered hot and fast, straight to your door!
             </p>
 
-            {/* Yellow Rounded CTA Button (Matches Reference) */}
+            {/* Yellow Rounded CTA Button */}
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <Link
                 href="/browse-menu"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#FFD64F] hover:bg-[#FACC15] text-[#24242A] text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#FFD64F] hover:bg-[#FACC15] text-[#24242A] text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-sm hover:shadow-md transition-all duration-200"
               >
                 <span>ORDER YOUR PIZZA NOW</span>
                 <span className="w-6 h-6 rounded-full bg-[#24242A]/10 flex items-center justify-center">
@@ -56,39 +52,48 @@ export function HeroSection() {
               </Link>
             </div>
 
-            {/* Social Proof Avatar Group (Matches Reference) */}
+            {/* Social Proof Avatar Group */}
             <div className="pt-2">
               <CustomerAvatars />
             </div>
           </div>
 
-          {/* Right Column: Prominent Pizza Imagery with Cheese Pull (Matches Reference) */}
-          <div className="lg:col-span-6 flex items-center justify-center relative mt-6 lg:mt-0">
-            {/* Soft backdrop glow circle */}
-            <div className="absolute w-[360px] sm:w-[480px] md:w-[540px] h-[360px] sm:h-[480px] md:h-[540px] rounded-full bg-radial from-white via-[#E8EDF4]/70 to-transparent dark:from-[#24242A]/60 dark:via-[#1F1F24]/30 pointer-events-none blur-2xl" />
+          {/* Right Column: High-End Professional Pizza Photography */}
+          <div className="lg:col-span-6 flex items-center justify-center relative">
+            {/* Subtle soft backdrop radial glow */}
+            <div className="absolute w-[300px] sm:w-[420px] lg:w-[480px] h-[300px] sm:h-[420px] lg:h-[480px] rounded-full bg-white/80 dark:bg-[#24242A]/40 blur-3xl pointer-events-none" />
 
-            {/* Circular Pizza Plate Composition */}
-            <div className="relative w-[320px] sm:w-[440px] md:w-[500px] h-[320px] sm:h-[440px] md:h-[500px] rounded-full p-3 bg-gradient-to-tr from-[#CBD5E1]/40 via-white to-[#E8EDF4] dark:from-[#24242A] dark:to-[#18181B] shadow-2xl flex items-center justify-center border-4 border-white dark:border-[#333338]">
-              {/* Inner dark rim representing the pizza pan/stone */}
-              <div className="relative w-full h-full rounded-full overflow-hidden bg-[#24242A] border-8 border-[#24242A] shadow-inner group">
-                <Image
-                  src="/images/brelyn-bashrum-kpz1Y1tikGM-unsplash.jpg"
-                  alt="Fresh artisan pizza with melted cheese slice lifted"
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 320px, (max-width: 1200px) 460px, 500px"
-                  className="object-cover scale-105 group-hover:scale-110 transition-transform duration-700"
-                />
+            {/* Clean Rounded Image Frame */}
+            <div className="relative w-full max-w-[520px] aspect-[4/3] sm:aspect-[16/11] rounded-3xl overflow-hidden bg-white dark:bg-[#24242A] shadow-xl border border-[#E8EDF4] dark:border-[#333338] group">
+              <Image
+                src="/images/kelvin-t-AcA8moIiD3g-unsplash.jpg"
+                alt="Artisan woodfired pizza with hot melted cheese pull"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 520px"
+                className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
 
-                {/* Subtle vignette for editorial photography depth */}
-                <div className="absolute inset-0 bg-radial from-transparent via-transparent to-black/20 pointer-events-none" />
+              {/* Floating Quality Tag */}
+              <div className="absolute bottom-4 left-4 bg-white/95 dark:bg-[#24242A]/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-md border border-[#E8EDF4] dark:border-[#333338] flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#FFD64F] text-[#24242A] flex items-center justify-center font-black text-sm">
+                  🍕
+                </div>
+                <div>
+                  <p className="text-xs font-black text-[#24242A] dark:text-white leading-tight">
+                    Artisan Hand-Tossed Crust
+                  </p>
+                  <p className="text-[11px] text-[#777777] dark:text-[#A1A1AA] leading-tight">
+                    100% Real Mozzarella & Olive Oil
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Hero / About Us Strip (Matches Reference) */}
+      {/* Bottom Hero Strip (About Us + Feature Pills) */}
       <FeaturePills />
     </section>
   );
