@@ -13,6 +13,9 @@ import {
   Eye,
   EyeOff,
   AlertTriangle,
+  Shield,
+  Store,
+  User,
 } from "lucide-react";
 
 function SignInContent() {
@@ -27,14 +30,13 @@ function SignInContent() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
+  const performSignIn = async (signInEmail, signInPassword) => {
     setLoading(true);
 
     try {
       const { data, error } = await signIn.email({
-        email: email.trim().toLowerCase(),
-        password,
+        email: signInEmail.trim().toLowerCase(),
+        password: signInPassword,
       });
 
       if (error) {
@@ -43,7 +45,7 @@ function SignInContent() {
         return;
       }
 
-      toast.success("Welcome back to PizzaHub! Benvenuto!");
+      toast.success("Welcome back to PizzaHub!");
 
       // If user had a specific destination
       if (redirectTo && redirectTo.startsWith("/")) {
@@ -69,6 +71,17 @@ function SignInContent() {
     }
   };
 
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    await performSignIn(email, password);
+  };
+
+  const handleQuickLogin = (quickEmail, quickPassword) => {
+    setEmail(quickEmail);
+    setPassword(quickPassword);
+    performSignIn(quickEmail, quickPassword);
+  };
+
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
@@ -84,13 +97,13 @@ function SignInContent() {
   };
 
   return (
-    <div className="bg-[var(--card)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+    <div className="bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
       <div className="text-center space-y-2">
-        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[var(--foreground)]">
-          Welcome Back
+        <h1 className="text-2xl sm:text-3xl font-black text-[#24242A] dark:text-white tracking-tight">
+          Welcome Back to PizzaHub
         </h1>
-        <p className="text-xs sm:text-sm text-[var(--muted-foreground)]">
-          Sign in to your PizzaHub account to track orders or manage your restaurant.
+        <p className="text-xs sm:text-sm text-[#777777] dark:text-[#A1A1AA]">
+          Sign in to access your dashboard, track orders, or manage your restaurant.
         </p>
       </div>
 
@@ -101,15 +114,62 @@ function SignInContent() {
         </div>
       )}
 
+      {/* Quick Demo Role Logins */}
+      <div className="p-3.5 rounded-2xl bg-[#F4F6FA] dark:bg-[#1F1F24] border border-[#E8EDF4] dark:border-[#333338] space-y-2">
+        <p className="text-[11px] font-extrabold uppercase tracking-wider text-[#777777] text-center">
+          ⚡ 1-Click Demo Login
+        </p>
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            onClick={() => handleQuickLogin("admin@pizzahub.com", "AdminPassword123")}
+            disabled={loading}
+            className="py-2 px-2 rounded-xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] hover:border-[#E66A2C] text-center transition-all cursor-pointer shadow-xs disabled:opacity-50"
+          >
+            <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-[#E66A2C]">
+              <Shield className="w-3.5 h-3.5" />
+              <span>Admin</span>
+            </div>
+            <span className="text-[10px] text-[#777777] block mt-0.5">Control Center</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleQuickLogin("vendor@pizzahub.com", "VendorPassword123")}
+            disabled={loading}
+            className="py-2 px-2 rounded-xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] hover:border-[#E66A2C] text-center transition-all cursor-pointer shadow-xs disabled:opacity-50"
+          >
+            <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-[#24242A] dark:text-white">
+              <Store className="w-3.5 h-3.5 text-[#E66A2C]" />
+              <span>Vendor</span>
+            </div>
+            <span className="text-[10px] text-[#777777] block mt-0.5">Trattoria</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleQuickLogin("customer@pizzahub.com", "CustomerPassword123")}
+            disabled={loading}
+            className="py-2 px-2 rounded-xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] hover:border-[#E66A2C] text-center transition-all cursor-pointer shadow-xs disabled:opacity-50"
+          >
+            <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-[#24242A] dark:text-white">
+              <User className="w-3.5 h-3.5 text-[#E66A2C]" />
+              <span>Customer</span>
+            </div>
+            <span className="text-[10px] text-[#777777] block mt-0.5">Order Food</span>
+          </button>
+        </div>
+      </div>
+
       {/* Google OAuth Button */}
       <button
         type="button"
         onClick={handleGoogleSignIn}
         disabled={googleLoading}
-        className="w-full py-3 rounded-2xl border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--muted)] text-[var(--foreground)] text-xs font-semibold flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-60"
+        className="w-full py-3 rounded-2xl border border-[#E8EDF4] dark:border-[#333338] bg-[#F4F6FA] dark:bg-[#1F1F24] hover:bg-[#E8EDF4] text-[#24242A] dark:text-white text-xs font-semibold flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-60"
       >
         {googleLoading ? (
-          <Loader2 className="w-4 h-4 animate-spin text-[#A92E24]" />
+          <Loader2 className="w-4 h-4 animate-spin text-[#E66A2C]" />
         ) : (
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -134,49 +194,49 @@ function SignInContent() {
       </button>
 
       <div className="relative flex items-center justify-center">
-        <div className="border-t border-[var(--border)] w-full" />
-        <span className="bg-[var(--card)] px-3 text-[11px] uppercase tracking-wider text-[var(--muted-foreground)] absolute">
-          Or continue with email
+        <div className="border-t border-[#E8EDF4] dark:border-[#333338] w-full" />
+        <span className="bg-white dark:bg-[#24242A] px-3 text-[11px] uppercase tracking-wider text-[#777777] absolute">
+          Or with email
         </span>
       </div>
 
       {/* Credential Login Form */}
       <form onSubmit={handleSignIn} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-[var(--foreground)] mb-1">
+          <label className="block text-xs font-semibold text-[#24242A] dark:text-white mb-1">
             Email Address
           </label>
           <div className="relative">
-            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#777777]" />
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[#A92E24]/30"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#F4F6FA] dark:bg-[#1F1F24] border border-[#E8EDF4] dark:border-[#333338] text-xs text-[#24242A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E66A2C]/30"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-[var(--foreground)] mb-1">
+          <label className="block text-xs font-semibold text-[#24242A] dark:text-white mb-1">
             Password
           </label>
           <div className="relative">
-            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#777777]" />
             <input
               type={showPassword ? "text" : "password"}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[#A92E24]/30"
+              className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#F4F6FA] dark:bg-[#1F1F24] border border-[#E8EDF4] dark:border-[#333338] text-xs text-[#24242A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E66A2C]/30"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#777777] hover:text-[#24242A] dark:hover:text-white cursor-pointer"
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -186,16 +246,16 @@ function SignInContent() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 rounded-2xl bg-[#A92E24] hover:bg-[#78231E] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-[#A92E24]/20 hover:shadow-xl transition-all cursor-pointer disabled:opacity-60"
+          className="w-full py-3 rounded-2xl bg-[#E66A2C] hover:bg-[#D95716] text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-60"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
           <span>Sign In to PizzaHub</span>
         </button>
       </form>
 
-      <div className="text-center text-xs text-[var(--muted-foreground)]">
+      <div className="text-center text-xs text-[#777777]">
         Don't have an account?{" "}
-        <Link href="/sign-up" className="font-semibold text-[#A92E24] hover:underline">
+        <Link href="/sign-up" className="font-bold text-[#E66A2C] hover:underline">
           Create one now
         </Link>
       </div>
@@ -208,7 +268,7 @@ export default function SignInPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center p-8">
-          <Loader2 className="w-6 h-6 animate-spin text-[#A92E24]" />
+          <Loader2 className="w-6 h-6 animate-spin text-[#E66A2C]" />
         </div>
       }
     >

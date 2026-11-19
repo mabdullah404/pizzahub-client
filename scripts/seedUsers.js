@@ -1,4 +1,4 @@
-import { auth, mongoClient } from "../src/lib/auth.js";
+import { auth, mongoClient } from "../lib/auth.js";
 
 async function seedDefaultUsers() {
   console.log("🌱 Starting PizzaHub default users seeding...");
