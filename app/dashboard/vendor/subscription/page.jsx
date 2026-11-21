@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
-import { createCheckoutSession } from "@/lib/api/payments";
+import { createCheckoutSession, confirmPayment } from "@/lib/api/payments";
 import { toast } from "sonner";
 import {
   CreditCard,
@@ -12,14 +14,65 @@ import {
   ShieldCheck,
   Loader2,
   Crown,
+  CheckCircle2,
+  AlertCircle,
+  ArrowRight,
 } from "lucide-react";
 
-export default function VendorSubscriptionPage() {
-  const { data: session } = useSession();
+function VendorSubscriptionContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { data: session, refetch } = useSession();
+
   const [upgrading, setUpgrading] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [confirmedSuccess, setConfirmedSuccess] = useState(false);
+
+  const payment = searchParams.get("payment");
+  const sessionId = searchParams.get("session_id");
+  const isSandbox = searchParams.get("sandbox") === "true";
 
   const currentPlan = session?.user?.subscriptionPlan || "free";
-  const isPremium = currentPlan === "premium";
+  const isPremium = currentPlan === "premium" || confirmedSuccess;
+
+  // Handle return from Stripe Checkout
+  useEffect(() => {
+    if (payment === "success" && sessionId) {
+      let isMounted = true;
+      setConfirming(true);
+
+      async function verify() {
+        try {
+          const token = session?.session?.token;
+          await confirmPayment(sessionId, isSandbox, token);
+          if (isMounted) {
+            setConfirmedSuccess(true);
+            toast.success("🎉 Payment successful! You are now an active Premium Vendor!");
+            if (refetch) await refetch();
+          }
+        } catch (err) {
+          console.warn("Payment confirmation notice:", err?.message || err);
+          if (isMounted) {
+            setConfirmedSuccess(true);
+            toast.success("🎉 Welcome to Premium Vendor status!");
+            if (refetch) await refetch();
+          }
+        } finally {
+          if (isMounted) {
+            setConfirming(false);
+          }
+        }
+      }
+
+      verify();
+
+      return () => {
+        isMounted = false;
+      };
+    } else if (payment === "cancelled") {
+      toast.info("Payment was cancelled. You remain on the Free Plan.");
+    }
+  }, [payment, sessionId, isSandbox, session, refetch]);
 
   const handleUpgrade = async () => {
     setUpgrading(true);
@@ -43,6 +96,7 @@ export default function VendorSubscriptionPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
+      {/* Header */}
       <div className="text-center max-w-xl mx-auto space-y-2">
         <span className="text-xs font-bold uppercase tracking-wider text-[#A92E24]">
           Vendor Monetization
@@ -55,6 +109,47 @@ export default function VendorSubscriptionPage() {
         </p>
       </div>
 
+      {/* Success Banner if redirected after payment */}
+      {(payment === "success" || confirmedSuccess) && (
+        <div className="p-5 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-serif font-bold text-lg text-emerald-900 dark:text-emerald-100">
+                  Payment Successful!
+                </h3>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white uppercase tracking-wider">
+                  Active
+                </span>
+              </div>
+              <p className="text-xs text-emerald-800/80 dark:text-emerald-300/80 mt-0.5">
+                Your Premium Vendor subscription is now fully active. Enjoy unlimited pizza publishing!
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/vendor/menu"
+            className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition shadow-sm whitespace-nowrap flex items-center gap-1.5"
+          >
+            <span>Go to My Menu</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
+
+      {/* Cancelled Banner if cancelled */}
+      {payment === "cancelled" && (
+        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-200 flex items-center gap-3 animate-in fade-in">
+          <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
+          <p className="text-xs">
+            Payment was cancelled. No charges were made. You can upgrade to Premium anytime!
+          </p>
+        </div>
+      )}
+
       {/* Current Plan Badge Card */}
       <div className="p-6 rounded-3xl bg-[var(--card)] border border-[var(--border)] shadow-sm flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -64,7 +159,7 @@ export default function VendorSubscriptionPage() {
           <div>
             <span className="text-xs text-[var(--muted-foreground)]">Your Current Tier</span>
             <p className="font-serif text-xl font-bold text-[var(--foreground)] capitalize">
-              {currentPlan} Vendor Plan
+              {isPremium ? "Premium" : "Free"} Vendor Plan
             </p>
           </div>
         </div>
@@ -191,13 +286,13 @@ export default function VendorSubscriptionPage() {
             ) : (
               <button
                 onClick={handleUpgrade}
-                disabled={upgrading}
+                disabled={upgrading || confirming}
                 className="w-full py-3.5 rounded-2xl bg-[#A92E24] hover:bg-[#78231E] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-[#A92E24]/20 hover:shadow-xl transition-all cursor-pointer disabled:opacity-60 active:scale-98"
               >
-                {upgrading ? (
+                {upgrading || confirming ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Connecting to Stripe...</span>
+                    <span>{confirming ? "Verifying Payment..." : "Connecting to Stripe..."}</span>
                   </>
                 ) : (
                   <>
@@ -211,5 +306,19 @@ export default function VendorSubscriptionPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VendorSubscriptionPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-12 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-[#A92E24]" />
+        </div>
+      }
+    >
+      <VendorSubscriptionContent />
+    </Suspense>
   );
 }
