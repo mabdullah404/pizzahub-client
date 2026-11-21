@@ -43,9 +43,21 @@ function BrowseMenuContent() {
     }
   };
 
+  // Sync from URL params (e.g. from Hero section search or category click)
+  useEffect(() => {
+    const urlQuery = searchParams.get("search");
+    if (urlQuery !== null && urlQuery !== search) {
+      setSearch(urlQuery);
+    }
+    const urlCategory = searchParams.get("category");
+    if (urlCategory && urlCategory !== category) {
+      setCategory(urlCategory);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     fetchFilteredItems();
-  }, [category, location, sort]);
+  }, [category, location, sort, searchParams]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();

@@ -38,12 +38,17 @@ export default function AdminManageMenuItemsPage() {
       setLoading(true);
       // Pass empty category and high limit to inspect items
       const serverUrl = getApiUrl();
+      const token = session?.session?.token;
       const query = new URLSearchParams();
       if (search) query.append("search", search);
+      if (statusFilter && statusFilter !== "all") query.append("status", statusFilter);
       query.append("limit", "100");
 
-      const res = await fetch(`${serverUrl}/api/menu?${query.toString()}`, {
+      const res = await fetch(`${serverUrl}/api/menu/admin/all-items?${query.toString()}`, {
         cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       const json = await res.json();
       setItems(json.data || []);
@@ -57,7 +62,7 @@ export default function AdminManageMenuItemsPage() {
 
   useEffect(() => {
     fetchItems();
-  }, [statusFilter]);
+  }, [session, statusFilter]);
 
   const handleStatusChange = async (itemId, newStatus) => {
     setActionId(itemId);

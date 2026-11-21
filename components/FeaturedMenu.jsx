@@ -64,9 +64,23 @@ export function FeaturedMenu({ items: initialItems = [] }) {
 
         {/* Menu Cards Grid */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-16 space-y-3">
-            <Loader2 className="w-8 h-8 animate-spin text-[#E66A2C]" />
-            <p className="text-xs text-[#777777]">Fetching artisan pizzas from kitchen...</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="rounded-3xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] p-4 space-y-4 animate-pulse"
+              >
+                <div className="w-full aspect-[4/3] rounded-2xl bg-[#E8EDF4] dark:bg-[#1F1F24]" />
+                <div className="space-y-2">
+                  <div className="h-4 w-2/3 bg-[#E8EDF4] dark:bg-[#1F1F24] rounded-md" />
+                  <div className="h-3 w-full bg-[#E8EDF4] dark:bg-[#1F1F24] rounded-md" />
+                </div>
+                <div className="flex items-center justify-between pt-2">
+                  <div className="h-6 w-16 bg-[#E8EDF4] dark:bg-[#1F1F24] rounded-md" />
+                  <div className="h-9 w-24 bg-[#E8EDF4] dark:bg-[#1F1F24] rounded-full" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : items.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">

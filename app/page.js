@@ -1,5 +1,4 @@
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 30;
 
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
@@ -13,9 +12,13 @@ import { getApiUrl } from "@/lib/utils/apiUrl";
 async function getFeaturedPizzas() {
   const serverUrl = getApiUrl();
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
     const res = await fetch(`${serverUrl}/api/menu?limit=6`, {
-      cache: "no-store",
+      next: { revalidate: 30 },
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
     if (res.ok) {
       const json = await res.json();
       return json.data || [];
