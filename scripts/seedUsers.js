@@ -7,9 +7,9 @@ async function seedDefaultUsers() {
 
   const accountsToSeed = [
     {
-      name: "PizzaHub Super Admin",
-      email: "admin@pizzahub.com",
-      password: "AdminPassword123",
+      name: "MD ABDULLAH AL MAMUN",
+      email: "mabdullah539629@gmail.com",
+      password: "Mabdullah77@",
       role: "admin",
       businessName: "",
     },

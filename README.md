@@ -1,6 +1,11 @@
 # 🍕 PizzaHub — Next.js 16 Client Frontend
 
-PizzaHub is a modern, responsive, role-based Italian pizza ordering and restaurant management platform built with Next.js 16 App Router and Tailwind CSS v4.
+PizzaHub is a modern, responsive, role-based Italian pizza ordering and restaurant management platform built with Next.js 16 App Router and Tailwind CSS.
+
+- **Live Client URL**: [https://pizzahub-client-tan.vercel.app](https://pizzahub-client-tan.vercel.app)
+- **Live Server API**: [https://pizzahub-server-mu.vercel.app](https://pizzahub-server-mu.vercel.app)
+- **Client GitHub**: [https://github.com/mabdullah404/pizzahub-client](https://github.com/mabdullah404/pizzahub-client)
+- **Server GitHub**: [https://github.com/mabdullah404/pizzahub-server](https://github.com/mabdullah404/pizzahub-server)
 
 ---
 
@@ -174,7 +179,7 @@ NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
 
 | Role | Email | Password |
 |---|---|---|
-| **Admin** | `admin@pizzahub.com` | `AdminPassword123` |
+| **Admin** | `mabdullah539629@gmail.com` | `Mabdullah77@` |
 | **Vendor** | `vendor@pizzahub.com` | `VendorPassword123` |
 | **Customer** | `customer@pizzahub.com` | `CustomerPassword123` |
 

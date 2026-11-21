@@ -114,45 +114,32 @@ function SignInContent() {
         </div>
       )}
 
-      {/* Quick Demo Role Logins */}
+      {/* Quick Demo Role Logins (Customer & Vendor only, per assignment requirements) */}
       <div className="p-3.5 rounded-2xl bg-[#F4F6FA] dark:bg-[#1F1F24] border border-[#E8EDF4] dark:border-[#333338] space-y-2">
         <p className="text-[11px] font-extrabold uppercase tracking-wider text-[#777777] text-center">
           ⚡ 1-Click Demo Login
         </p>
-        <div className="grid grid-cols-3 gap-2">
-          <button
-            type="button"
-            onClick={() => handleQuickLogin("admin@pizzahub.com", "AdminPassword123")}
-            disabled={loading}
-            className="py-2 px-2 rounded-xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] hover:border-[#E66A2C] text-center transition-all cursor-pointer shadow-xs disabled:opacity-50"
-          >
-            <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-[#E66A2C]">
-              <Shield className="w-3.5 h-3.5" />
-              <span>Admin</span>
-            </div>
-            <span className="text-[10px] text-[#777777] block mt-0.5">Control Center</span>
-          </button>
-
+        <div className="grid grid-cols-2 gap-2.5">
           <button
             type="button"
             onClick={() => handleQuickLogin("vendor@pizzahub.com", "VendorPassword123")}
             disabled={loading}
-            className="py-2 px-2 rounded-xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] hover:border-[#E66A2C] text-center transition-all cursor-pointer shadow-xs disabled:opacity-50"
+            className="py-2.5 px-3 rounded-xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] hover:border-[#E66A2C] text-center transition-all cursor-pointer shadow-xs disabled:opacity-50"
           >
-            <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-[#24242A] dark:text-white">
+            <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#24242A] dark:text-white">
               <Store className="w-3.5 h-3.5 text-[#E66A2C]" />
               <span>Vendor</span>
             </div>
-            <span className="text-[10px] text-[#777777] block mt-0.5">Trattoria</span>
+            <span className="text-[10px] text-[#777777] block mt-0.5">Trattoria Owner</span>
           </button>
 
           <button
             type="button"
             onClick={() => handleQuickLogin("customer@pizzahub.com", "CustomerPassword123")}
             disabled={loading}
-            className="py-2 px-2 rounded-xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] hover:border-[#E66A2C] text-center transition-all cursor-pointer shadow-xs disabled:opacity-50"
+            className="py-2.5 px-3 rounded-xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] hover:border-[#E66A2C] text-center transition-all cursor-pointer shadow-xs disabled:opacity-50"
           >
-            <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-[#24242A] dark:text-white">
+            <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#24242A] dark:text-white">
               <User className="w-3.5 h-3.5 text-[#E66A2C]" />
               <span>Customer</span>
             </div>

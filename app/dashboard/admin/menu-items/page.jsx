@@ -36,7 +36,11 @@ export default function AdminManageMenuItemsPage() {
     try {
       setLoading(true);
       // Pass empty category and high limit to inspect items
-      const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
+      const serverUrl =
+        process.env.NEXT_PUBLIC_SERVER_URL ||
+        (typeof window !== "undefined" && !window.location.hostname.includes("localhost")
+          ? "https://pizzahub-server-mu.vercel.app"
+          : "http://localhost:5000");
       const query = new URLSearchParams();
       if (search) query.append("search", search);
       query.append("limit", "100");

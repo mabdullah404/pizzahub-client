@@ -7,7 +7,11 @@ import { HowItWorks } from "@/components/HowItWorks";
 import { Footer } from "@/components/Footer";
 
 async function getFeaturedPizzas() {
-  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
+  const serverUrl =
+    process.env.NEXT_PUBLIC_SERVER_URL ||
+    (process.env.NODE_ENV === "production"
+      ? "https://pizzahub-server-mu.vercel.app"
+      : "http://localhost:5000");
   try {
     const res = await fetch(`${serverUrl}/api/menu?limit=6`, {
       cache: "no-store",
