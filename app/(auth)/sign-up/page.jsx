@@ -74,12 +74,7 @@ function SignUpContent() {
       }
 
       toast.success("Account created successfully! Welcome to PizzaHub.");
-      if (role === "vendor") {
-        router.push("/dashboard/vendor");
-      } else {
-        router.push("/dashboard/customer");
-      }
-      router.refresh();
+      window.location.href = role === "vendor" ? "/dashboard/vendor" : "/dashboard/customer";
     } catch (err) {
       console.error("Sign up exception:", err);
       toast.error(err.message || "Failed to register account.");

@@ -44,23 +44,19 @@ function SignInContent() {
 
       toast.success("Welcome back to PizzaHub!");
 
-      // If user had a specific destination
+      // Determine target destination
+      const userRole = data?.user?.role || "customer";
+      let destination = "/dashboard/customer";
       if (redirectTo && redirectTo.startsWith("/")) {
-        router.push(redirectTo);
-        router.refresh();
-        return;
+        destination = redirectTo;
+      } else if (userRole === "admin") {
+        destination = "/dashboard/admin";
+      } else if (userRole === "vendor") {
+        destination = "/dashboard/vendor";
       }
 
-      // Role-based redirect
-      const userRole = data?.user?.role || "customer";
-      if (userRole === "admin") {
-        router.push("/dashboard/admin");
-      } else if (userRole === "vendor") {
-        router.push("/dashboard/vendor");
-      } else {
-        router.push("/dashboard/customer");
-      }
-      router.refresh();
+      // Hard navigation ensures browser commits cookies and server components load fresh session
+      window.location.href = destination;
     } catch (err) {
       console.error("Sign in exception:", err);
       toast.error(err.message || "Sign in failed.");

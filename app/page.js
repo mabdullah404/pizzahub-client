@@ -2,6 +2,7 @@ export const revalidate = 30;
 
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
+import { HomeSearchFilter } from "@/components/HomeSearchFilter";
 import { FeaturedMenu } from "@/components/FeaturedMenu";
 import { CategorySection } from "@/components/CategorySection";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
@@ -39,6 +40,11 @@ export default async function HomePage() {
       <main className="flex-1">
         {/* Hero Section matching exact reference design with delivery path & feature pills */}
         <HeroSection />
+
+        {/* Prominent Homepage Search & Filter Toolbar (Assignment Req: Instant Search & Filter on Home) */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <HomeSearchFilter />
+        </section>
 
         {/* Featured Pizza Menu (Real Database Items) */}
         <FeaturedMenu items={featuredPizzas} />
