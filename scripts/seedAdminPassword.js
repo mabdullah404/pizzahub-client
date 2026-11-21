@@ -4,8 +4,12 @@ async function main() {
   const db = mongoClient.db(process.env.DB_NAME || "pizzaHubDB");
   const userCol = db.collection("user");
   const accountCol = db.collection("account");
-  const adminEmail = "mabdullah539629@gmail.com";
-  const adminPass = "Mabdullah77@";
+  const adminEmail = process.env.ADMIN_EMAIL || "mabdullah539629@gmail.com";
+  const adminPass = process.env.ADMIN_PASSWORD;
+  if (!adminPass) {
+    console.error("ADMIN_PASSWORD environment variable is required.");
+    process.exit(1);
+  }
 
   const user = await userCol.findOne({ email: adminEmail });
   if (!user) {

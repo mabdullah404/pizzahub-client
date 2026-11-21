@@ -3,8 +3,8 @@ import { auth, mongoClient } from "../lib/auth.js";
 async function main() {
   const db = mongoClient.db(process.env.DB_NAME || "pizzaHubDB");
   const userCol = db.collection("user");
-  const adminEmail = "mabdullah539629@gmail.com";
-  const adminPass = "Mabdullah77@";
+  const adminEmail = process.env.ADMIN_EMAIL || "mabdullah539629@gmail.com";
+  const adminPass = process.env.ADMIN_PASSWORD;
 
   console.log("Checking admin account for:", adminEmail);
   const existingUser = await userCol.findOne({ email: adminEmail });
