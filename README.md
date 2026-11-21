@@ -192,7 +192,7 @@ NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
 Testing accounts are pre-configured in the platform database for evaluation. 
 In compliance with assignment security guidelines:
 - **Admin**: Credentials provided securely in the assignment submission portal (strictly protected from public registration).
-- **Vendor & Customer**: Pre-seeded accounts accessible directly via the 1-Click Demo Login buttons on `/sign-in` or through public registration on `/sign-up`.
+- **Vendor & Customer**: Register directly through public registration on `/sign-up` selecting Vendor (Restaurant Owner) or Customer role.
 
 ---
 
