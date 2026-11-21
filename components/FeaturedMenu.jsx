@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Flame, Loader2 } from "lucide-react";
 import { MenuCard } from "@/components/MenuCard";
+import { getApiUrl } from "@/lib/utils/apiUrl";
 
 export function FeaturedMenu({ items: initialItems = [] }) {
   const [items, setItems] = useState(initialItems);
@@ -17,11 +18,7 @@ export function FeaturedMenu({ items: initialItems = [] }) {
     }
 
     // Client-side fallback fetch from backend API if SSR initialItems was empty
-    const serverUrl =
-      process.env.NEXT_PUBLIC_SERVER_URL ||
-      (typeof window !== "undefined" && !window.location.hostname.includes("localhost")
-        ? "https://pizzahub-server-mu.vercel.app"
-        : "http://localhost:5000");
+    const serverUrl = getApiUrl();
 
     fetch(`${serverUrl}/api/menu?limit=6`)
       .then((res) => res.json())

@@ -8,13 +8,10 @@ import { CategorySection } from "@/components/CategorySection";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Footer } from "@/components/Footer";
+import { getApiUrl } from "@/lib/utils/apiUrl";
 
 async function getFeaturedPizzas() {
-  const serverUrl =
-    process.env.NEXT_PUBLIC_SERVER_URL ||
-    (process.env.NODE_ENV === "production"
-      ? "https://pizzahub-server-mu.vercel.app"
-      : "http://localhost:5000");
+  const serverUrl = getApiUrl();
   try {
     const res = await fetch(`${serverUrl}/api/menu?limit=6`, {
       cache: "no-store",
