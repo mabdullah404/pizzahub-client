@@ -42,53 +42,65 @@ The application follows an authentic, warm, and elegant Italian Premium visual i
 ```text
 PizzaHub-Client/
 │
-├── src/
-│   ├── app/
-│   │   ├── (auth)/
-│   │   │   ├── sign-in/page.jsx       # Email & Google Sign In with role redirect
-│   │   │   ├── sign-up/page.jsx       # Role selection (Customer / Vendor)
-│   │   │   └── layout.jsx             # Dedicated authentication layout
-│   │   │
-│   │   ├── api/auth/[...all]/route.js # Better Auth Next.js catch-all API handler
-│   │   │
-│   │   ├── browse-menu/page.jsx       # Challenge 1: Advanced Search & Filter
-│   │   ├── menu/[id]/page.jsx         # Item Details, multi-image gallery & order form
-│   │   │
-│   │   ├── dashboard/
-│   │   │   ├── layout.jsx             # Dashboard root layout
-│   │   │   ├── vendor/                # Vendor portal (My items, Add, Orders, Subscription)
-│   │   │   ├── customer/              # Customer portal (Overview, My Orders, Timeline)
-│   │   │   └── admin/                 # Admin panel (Users, Menus, Transactions)
-│   │   │
-│   │   ├── checkout/
-│   │   │   ├── success/page.jsx       # Subscription success confirmation
-│   │   │   └── cancel/page.jsx        # Subscription cancelled notice
-│   │   │
-│   │   ├── layout.js                  # Root layout with fonts, ThemeProvider & Sonner
-│   │   ├── page.js                    # Italian Premium Homepage
-│   │   ├── loading.jsx                # Pizza preparation loader
-│   │   ├── error.jsx                  # Global error boundary
-│   │   ├── not-found.jsx              # Custom Italian 404 screen
-│   │   └── globals.css                # Tailwind CSS v4 Italian Premium variables
+├── app/
+│   ├── (auth)/
+│   │   ├── sign-in/page.jsx           # Email & Google Sign In with role redirect
+│   │   ├── sign-up/page.jsx           # Role selection (Customer / Vendor)
+│   │   └── layout.jsx                 # Dedicated authentication layout
 │   │
-│   ├── components/
-│   │   ├── Navbar.jsx                 # Dynamic responsive navigation & role links
-│   │   ├── Footer.jsx                 # Italian footer with modern X logo
-│   │   ├── MenuCard.jsx               # Reusable equal-sized pizza card
-│   │   ├── DashboardSidebar.jsx       # Role-adaptive sidebar navigation
-│   │   ├── ThemeToggle.jsx            # Dark / Light mode toggle
-│   │   └── theme-provider.jsx         # Next-themes client provider
+│   ├── api/auth/[...all]/route.js     # Better Auth Next.js catch-all API handler
 │   │
-│   └── lib/
-│       ├── api/                       # Modular API clients (menu, orders, users, etc.)
-│       ├── core/server.js             # Server-side auth, token extraction & requireRole
-│       ├── constants/images.js        # Local Unsplash images & category mapping
-│       ├── auth.js                    # Better Auth server configuration & JWT plugin
-│       ├── auth-client.js             # Better Auth browser client utilities
-│       └── utils.js                   # Utility functions & currency formatters
+│   ├── browse-menu/page.jsx           # Challenge 1: Advanced Search & Filter
+│   ├── menu/[id]/page.jsx             # Item Details, multi-image gallery & order form
+│   │
+│   ├── dashboard/
+│   │   ├── layout.jsx                 # Dashboard root layout
+│   │   ├── vendor/                    # Vendor portal (My items, Add, Orders, Subscription)
+│   │   ├── customer/                  # Customer portal (Overview, My Orders, Timeline)
+│   │   └── admin/                     # Admin panel (Users, Menus, Transactions)
+│   │
+│   ├── checkout/
+│   │   ├── success/page.jsx           # Subscription success confirmation
+│   │   └── cancel/page.jsx            # Subscription cancelled notice
+│   │
+│   ├── layout.js                      # Root layout with fonts, ThemeProvider & Sonner
+│   ├── page.js                        # Italian Premium Homepage
+│   ├── loading.jsx                    # Pizza preparation loader
+│   ├── error.jsx                      # Global error boundary
+│   ├── not-found.jsx                  # Custom Italian 404 screen
+│   └── globals.css                    # Tailwind CSS v4 variables
+│
+├── components/
+│   ├── Navbar.jsx                     # Dynamic responsive navigation & role links
+│   ├── Footer.jsx                     # Italian footer with modern X logo
+│   ├── MenuCard.jsx                   # Reusable equal-sized pizza card
+│   ├── DashboardSidebar.jsx           # Role-adaptive sidebar navigation
+│   ├── ThemeToggle.jsx                # Dark / Light mode toggle
+│   ├── theme-provider.jsx             # Next-themes client provider
+│   ├── HeroSection.jsx                # Modern Hero layout
+│   ├── CustomerAvatars.jsx            # Customer proof badge
+│   ├── DeliveryPath.jsx               # Visual delivery curve illustration
+│   ├── FeaturePills.jsx               # Feature tags strip
+│   ├── FeaturedMenu.jsx               # Dynamic featured pizzas grid
+│   ├── CategorySection.jsx            # 6 pizza categories
+│   ├── WhyChooseUs.jsx                # Why Choose PizzaHub benefits
+│   └── HowItWorks.jsx                 # How ordering works steps
+│
+├── lib/
+│   ├── api/                           # Modular API clients (menu, orders, users, etc.)
+│   ├── core/server.js                 # Server-side auth, token extraction & requireRole
+│   ├── constants/images.js            # Local Unsplash images & category mapping
+│   ├── auth.js                        # Better Auth server configuration & MongoDB adapter
+│   ├── auth-client.js                 # Better Auth browser client utilities
+│   └── utils.js                       # Utility functions & currency formatters
 │
 ├── public/
-│   └── images/                        # High-resolution Unsplash food photography
+│   └── images/                        # High-resolution food photography
+│
+├── scripts/
+│   ├── seedUsers.js                   # Seeder for demo accounts
+│   ├── seedAdmin.js                   # Admin verification script
+│   └── seedAdminPassword.js           # Password hash & credential seeder
 │
 ├── .env.example
 ├── .gitignore
@@ -175,13 +187,12 @@ NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
 
 ---
 
-## 👤 Default Testing Accounts
+## 👤 Testing Accounts & Role Access
 
-| Role | Email | Password |
-|---|---|---|
-| **Admin** | `mabdullah539629@gmail.com` | `Mabdullah77@` |
-| **Vendor** | `vendor@pizzahub.com` | `VendorPassword123` |
-| **Customer** | `customer@pizzahub.com` | `CustomerPassword123` |
+Testing accounts are pre-configured in the platform database for evaluation. 
+In compliance with assignment security guidelines:
+- **Admin**: Credentials provided securely in the assignment submission portal (strictly protected from public registration).
+- **Vendor & Customer**: Pre-seeded accounts accessible directly via the 1-Click Demo Login buttons on `/sign-in` or through public registration on `/sign-up`.
 
 ---
 

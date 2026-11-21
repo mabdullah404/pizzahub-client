@@ -1,8 +1,43 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Flame } from "lucide-react";
+import { ArrowRight, Flame, Loader2 } from "lucide-react";
 import { MenuCard } from "@/components/MenuCard";
 
-export function FeaturedMenu({ items = [] }) {
+export function FeaturedMenu({ items: initialItems = [] }) {
+  const [items, setItems] = useState(initialItems);
+  const [loading, setLoading] = useState(initialItems.length === 0);
+
+  useEffect(() => {
+    if (initialItems && initialItems.length > 0) {
+      setItems(initialItems);
+      setLoading(false);
+      return;
+    }
+
+    // Client-side fallback fetch from backend API if SSR initialItems was empty
+    const serverUrl =
+      process.env.NEXT_PUBLIC_SERVER_URL ||
+      (typeof window !== "undefined" && !window.location.hostname.includes("localhost")
+        ? "https://pizzahub-server-mu.vercel.app"
+        : "http://localhost:5000");
+
+    fetch(`${serverUrl}/api/menu?limit=6`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+          setItems(json.data);
+        }
+      })
+      .catch((err) => {
+        console.error("Client fetch for featured pizzas error:", err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [initialItems]);
+
   return (
     <section className="py-16 sm:py-24 bg-[#F4F6FA] dark:bg-[#18181B] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -31,7 +66,12 @@ export function FeaturedMenu({ items = [] }) {
         </div>
 
         {/* Menu Cards Grid */}
-        {items.length > 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-16 space-y-3">
+            <Loader2 className="w-8 h-8 animate-spin text-[#E66A2C]" />
+            <p className="text-xs text-[#777777]">Fetching artisan pizzas from kitchen...</p>
+          </div>
+        ) : items.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {items.map((item) => (
               <MenuCard key={item._id} item={item} />
