@@ -13,23 +13,26 @@ import {
   LayoutDashboard,
   LogOut,
   ChevronDown,
-  Pizza,
   Home,
   BookOpen,
   ShoppingBag,
   ArrowRight,
   ShieldCheck,
   ChefHat,
-  Sparkles,
 } from "lucide-react";
 
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Close desktop dropdown on outside click
   useEffect(() => {
@@ -58,6 +61,15 @@ export function Navbar() {
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
+
+  // Click logo to scroll smoothly to top
+  const handleLogoClick = (e) => {
+    setMobileMenuOpen(false);
+    if (pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   const handleSignOut = async () => {
     try {
@@ -116,18 +128,30 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#F4F6FA]/90 dark:bg-[#18181B]/90 backdrop-blur-md border-b border-[#E8EDF4] dark:border-[#333338] transition-colors">
+      {/* 
+        Sticky Header:
+        - sticky top-0 z-50 ensures it remains anchored on top during scroll on both mobile and desktop
+        - Fixed height (h-20) and balanced 3-column flex layout completely eliminates hydration shaking/flickering
+      */}
+      <header className="sticky top-0 z-50 w-full bg-[#F4F6FA]/95 dark:bg-[#18181B]/95 backdrop-blur-md border-b border-[#E8EDF4] dark:border-[#333338] transition-colors shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            {/* 1. Brand Logo */}
-            <Link href="/" className="flex items-center gap-2 group">
-              <span className="font-serif font-black text-2xl tracking-tight text-[#24242A] dark:text-white flex items-center">
-                Pizza<span className="text-[#E66A2C]">Hub</span>
-              </span>
-            </Link>
+            {/* 1. Left Column: Brand Logo (Clicks to smoothly scroll to top) */}
+            <div className="w-40 sm:w-48 shrink-0 flex items-center">
+              <Link
+                href="/"
+                onClick={handleLogoClick}
+                className="inline-flex items-center gap-2 group cursor-pointer select-none"
+                title="PizzaHub - Scroll to top"
+              >
+                <span className="font-serif font-black text-2xl tracking-tight text-[#24242A] dark:text-white flex items-center">
+                  Pizza<span className="text-[#E66A2C]">Hub</span>
+                </span>
+              </Link>
+            </div>
 
-            {/* 2. Desktop Navigation Links (Center) */}
-            <nav className="hidden md:flex items-center gap-8">
+            {/* 2. Center Column: Desktop Navigation Links (Anchored to center, no jumping) */}
+            <nav className="hidden md:flex flex-1 items-center justify-center gap-8">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
@@ -146,19 +170,23 @@ export function Navbar() {
               })}
             </nav>
 
-            {/* 3. Right Header Actions */}
-            <div className="flex items-center gap-3">
-              {/* Theme Toggle (Always visible on all screens) */}
+            {/* 3. Right Column: Theme Toggle & Authentication Controls */}
+            <div className="w-40 sm:w-48 shrink-0 flex items-center justify-end gap-3">
+              {/* Theme Toggle (Always present and stable) */}
               <ThemeToggle />
 
-              {/* Desktop Auth State / Profile Dropdown (HIDDEN ON MOBILE) */}
-              {user ? (
+              {/* Desktop Auth State (Mounted & Stabilized to prevent hydration flicker) */}
+              {!mounted || isPending ? (
+                <div className="hidden md:flex items-center justify-end w-32 h-9">
+                  <div className="w-24 h-8 rounded-full bg-black/5 dark:bg-white/5 animate-pulse" />
+                </div>
+              ) : user ? (
                 <div className="hidden md:block relative ml-1" ref={dropdownRef}>
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                     className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] shadow-xs hover:border-[#E66A2C] transition-all text-xs font-semibold text-[#24242A] dark:text-white cursor-pointer"
                   >
-                    <div className="w-8 h-8 rounded-full bg-[#FFD64F] text-[#24242A] flex items-center justify-center font-bold text-xs uppercase overflow-hidden">
+                    <div className="w-8 h-8 rounded-full bg-[#FFD64F] text-[#24242A] flex items-center justify-center font-bold text-xs uppercase overflow-hidden shrink-0">
                       {user.image ? (
                         <img
                           src={user.image}
@@ -169,7 +197,7 @@ export function Navbar() {
                         user.name ? user.name[0] : "U"
                       )}
                     </div>
-                    <span className="inline-block max-w-[120px] truncate font-bold">
+                    <span className="inline-block max-w-[100px] truncate font-bold">
                       {user.name?.split(" ")[0] || "Account"}
                     </span>
                     <ChevronDown className="w-3.5 h-3.5 text-[#777777]" />
@@ -218,7 +246,7 @@ export function Navbar() {
                   )}
                 </div>
               ) : (
-                /* Desktop Sign In / Sign Up buttons (STRICTLY HIDDEN ON MOBILE) */
+                /* Desktop Sign In / Sign Up buttons (Strictly hidden on mobile) */
                 <div className="hidden md:flex items-center gap-2.5">
                   <Link
                     href="/sign-in"
@@ -266,7 +294,7 @@ export function Navbar() {
               <div className="flex items-center justify-between pb-4 border-b border-[#E8EDF4] dark:border-[#333338]">
                 <Link
                   href="/"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={handleLogoClick}
                   className="font-serif font-black text-xl tracking-tight text-[#24242A] dark:text-white"
                 >
                   Pizza<span className="text-[#E66A2C]">Hub</span>
