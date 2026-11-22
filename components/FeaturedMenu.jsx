@@ -1,14 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { ArrowRight, Flame, Loader2 } from "lucide-react";
+import { ArrowRight, Flame, RotateCcw, AlertCircle } from "lucide-react";
 import { MenuCard } from "@/components/MenuCard";
+import { Container } from "@/components/Container";
 import { getApiUrl } from "@/lib/utils/apiUrl";
 
 export function FeaturedMenu({ items: initialItems = [] }) {
   const [items, setItems] = useState(initialItems);
   const [loading, setLoading] = useState(initialItems.length === 0);
+  const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const fetchFeatured = useCallback(async (currentRetry = 0) => {
+    setLoading(true);
+    setError(null);
+    const serverUrl = getApiUrl();
+
+    try {
+      const res = await fetch(`${serverUrl}/api/menu?limit=6`, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+      const json = await res.json();
+
+      if (json.success && Array.isArray(json.data)) {
+        setItems(json.data);
+      } else {
+        setItems([]);
+      }
+    } catch (err) {
+      console.warn(`Featured menu fetch failed (attempt ${currentRetry + 1}/3):`, err.message);
+      if (currentRetry < 2) {
+        // Auto-retry up to 2 times with backoff
+        setTimeout(() => {
+          setRetryCount(currentRetry + 1);
+          fetchFeatured(currentRetry + 1);
+        }, 1200 * (currentRetry + 1));
+      } else {
+        setError("Unable to load featured pizzas at this moment.");
+        setLoading(false);
+      }
+    } finally {
+      if (currentRetry >= 2 || items.length > 0) {
+        setLoading(false);
+      }
+    }
+  }, [items.length]);
 
   useEffect(() => {
     if (initialItems && initialItems.length > 0) {
@@ -16,28 +56,17 @@ export function FeaturedMenu({ items: initialItems = [] }) {
       setLoading(false);
       return;
     }
+    fetchFeatured(0);
+  }, [initialItems, fetchFeatured]);
 
-    // Client-side fallback fetch from backend API if SSR initialItems was empty
-    const serverUrl = getApiUrl();
-
-    fetch(`${serverUrl}/api/menu?limit=6`)
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-          setItems(json.data);
-        }
-      })
-      .catch((err) => {
-        console.error("Client fetch for featured pizzas error:", err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [initialItems]);
+  const handleManualRetry = () => {
+    setRetryCount(0);
+    fetchFeatured(0);
+  };
 
   return (
     <section className="py-16 sm:py-24 bg-[#F4F6FA] dark:bg-[#18181B] transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Container>
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="space-y-2">
@@ -62,13 +91,13 @@ export function FeaturedMenu({ items: initialItems = [] }) {
           </Link>
         </div>
 
-        {/* Menu Cards Grid */}
+        {/* Menu Cards Grid / Skeletons / States */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {[1, 2, 3].map((i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
+            {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="rounded-3xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] p-4 space-y-4 animate-pulse"
+                className="rounded-3xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] p-4 space-y-4 animate-pulse h-full"
               >
                 <div className="w-full aspect-[4/3] rounded-2xl bg-[#E8EDF4] dark:bg-[#1F1F24]" />
                 <div className="space-y-2">
@@ -82,23 +111,50 @@ export function FeaturedMenu({ items: initialItems = [] }) {
               </div>
             ))}
           </div>
+        ) : error ? (
+          <div className="text-center py-12 px-6 rounded-3xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] max-w-md mx-auto space-y-4 shadow-xs">
+            <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-[#24242A] dark:text-white">
+                {error}
+              </p>
+              <p className="text-xs text-[#777777] dark:text-[#A1A1AA] mt-1">
+                Please check your network connection and try again.
+              </p>
+            </div>
+            <button
+              onClick={handleManualRetry}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#E66A2C] hover:bg-[#D4591D] text-white text-xs font-bold shadow-xs transition-all cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>আবার চেষ্টা করুন (Try Again)</span>
+            </button>
+          </div>
         ) : items.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
             {items.map((item) => (
               <MenuCard key={item._id} item={item} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 rounded-3xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] p-8">
+          <div className="text-center py-12 rounded-3xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] p-8 max-w-lg mx-auto">
             <p className="text-base font-bold text-[#24242A] dark:text-white">
               No menu items currently available.
             </p>
-            <p className="text-xs text-[#777777] mt-1">
-              Please check back shortly or explore all available options.
+            <p className="text-xs text-[#777777] dark:text-[#A1A1AA] mt-1 mb-4">
+              Our artisan bakers are preparing fresh recipes. Please explore all available options.
             </p>
+            <Link
+              href="/browse-menu"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FFD64F] hover:bg-[#FACC15] text-[#24242A] text-xs font-bold shadow-xs"
+            >
+              <span>Browse Catalog</span>
+            </Link>
           </div>
         )}
-      </div>
+      </Container>
     </section>
   );
 }

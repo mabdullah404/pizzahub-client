@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { useSession, signOut } from "@/lib/auth-client";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Container } from "@/components/Container";
 import { toast } from "sonner";
 import {
   Menu as MenuIcon,
@@ -134,13 +135,13 @@ export function Navbar() {
         - Fixed height (h-20) and balanced 3-column flex layout completely eliminates hydration shaking/flickering
       */}
       <header className="sticky top-0 z-50 w-full bg-[#F4F6FA]/95 dark:bg-[#18181B]/95 backdrop-blur-md border-b border-[#E8EDF4] dark:border-[#333338] transition-colors shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Container>
           <div className="flex items-center justify-between h-20">
-            {/* 1. Left Column: Brand Logo (Clicks to smoothly scroll to top) */}
+            {/* 1. Left Column: Brand Logo (Stable size everywhere, clicks to scroll to top) */}
             <Link
               href="/"
               onClick={handleLogoClick}
-              className="inline-flex items-center gap-2 group cursor-pointer select-none"
+              className="inline-flex items-center gap-2 group cursor-pointer select-none shrink-0"
               title="PizzaHub - Scroll to top"
             >
               <span className="font-serif font-black text-2xl tracking-tight text-[#24242A] dark:text-white flex items-center">
@@ -148,8 +149,8 @@ export function Navbar() {
               </span>
             </Link>
 
-            {/* 2. Center Column: Desktop Navigation Links */}
-            <nav className="hidden md:flex items-center gap-8">
+            {/* 2. Center Column: Desktop/Laptop Navigation Links (lg+) */}
+            <nav className="hidden lg:flex items-center gap-8">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
@@ -173,9 +174,9 @@ export function Navbar() {
               {/* Theme Toggle (Always present and stable) */}
               <ThemeToggle />
 
-              {/* Desktop Auth State */}
+              {/* Desktop/Laptop Auth State (lg+) */}
               {user ? (
-                <div className="hidden md:block relative ml-1" ref={dropdownRef}>
+                <div className="hidden lg:block relative ml-1" ref={dropdownRef}>
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                     className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] shadow-xs hover:border-[#E66A2C] transition-all text-xs font-semibold text-[#24242A] dark:text-white cursor-pointer"
@@ -240,8 +241,8 @@ export function Navbar() {
                   )}
                 </div>
               ) : (
-                /* Desktop Sign In / Sign Up buttons (Exact original design) */
-                <div className="hidden md:flex items-center gap-2.5">
+                /* Desktop/Laptop Sign In / Sign Up buttons */
+                <div className="hidden lg:flex items-center gap-2.5">
                   <Link
                     href="/sign-in"
                     className="px-5 py-2.5 rounded-full text-xs font-bold text-[#24242A] dark:text-white bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] hover:border-[#E66A2C] transition-all shadow-xs"
@@ -257,23 +258,23 @@ export function Navbar() {
                 </div>
               )}
 
-              {/* 4. Mobile 3-Line Hamburger Toggle Button (VISIBLE ONLY ON MOBILE) */}
+              {/* 4. Mobile & Tablet Hamburger Toggle Button (< lg) */}
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
-                className="md:hidden p-2.5 rounded-2xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] text-[#24242A] dark:text-white hover:text-[#E66A2C] transition-all shadow-xs cursor-pointer"
+                className="lg:hidden p-2.5 rounded-2xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] text-[#24242A] dark:text-white hover:text-[#E66A2C] transition-all shadow-xs cursor-pointer"
                 aria-label="Open mobile menu"
               >
                 <MenuIcon className="w-5 h-5" />
               </button>
             </div>
           </div>
-        </div>
+        </Container>
       </header>
 
-      {/* 5. Modern Smooth Mobile Drawer (Right Side Slide-Over) */}
+      {/* 5. Modern Smooth Mobile & Tablet Drawer (Right Side Slide-Over) */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex justify-end">
+        <div className="fixed inset-0 z-50 lg:hidden flex justify-end">
           {/* Backdrop overlay */}
           <div
             onClick={() => setMobileMenuOpen(false)}

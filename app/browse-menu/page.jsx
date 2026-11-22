@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { MenuCard } from "@/components/MenuCard";
+import { Container } from "@/components/Container";
 import { getMenuItems } from "@/lib/api/menu-items";
 import { PIZZA_CATEGORIES, POPULAR_LOCATIONS } from "@/lib/constants/locations";
 import { Search, Filter, RotateCcw, Pizza, ArrowUpDown, Loader2 } from "lucide-react";
@@ -76,7 +77,7 @@ function BrowseMenuContent() {
     <div className="flex flex-col min-h-screen">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <Container as="main" className="flex-1 py-10">
         {/* Page Header */}
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-xs font-semibold uppercase tracking-wider text-[#A92E24]">
@@ -185,9 +186,23 @@ function BrowseMenuContent() {
             MENU CARDS GRID & STATES
            =================================================================== */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 text-[var(--muted-foreground)] space-y-3">
-            <Loader2 className="w-8 h-8 animate-spin text-[#A92E24]" />
-            <p className="text-sm font-medium">Fetching woodfired pizza offerings...</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div
+                key={i}
+                className="rounded-3xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] p-4 space-y-4 animate-pulse h-full"
+              >
+                <div className="w-full aspect-[4/3] rounded-2xl bg-[#E8EDF4] dark:bg-[#1F1F24]" />
+                <div className="space-y-2">
+                  <div className="h-4 w-2/3 bg-[#E8EDF4] dark:bg-[#1F1F24] rounded-md" />
+                  <div className="h-3 w-full bg-[#E8EDF4] dark:bg-[#1F1F24] rounded-md" />
+                </div>
+                <div className="flex items-center justify-between pt-2">
+                  <div className="h-6 w-16 bg-[#E8EDF4] dark:bg-[#1F1F24] rounded-md" />
+                  <div className="h-9 w-24 bg-[#E8EDF4] dark:bg-[#1F1F24] rounded-full" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : error ? (
           <div className="text-center py-16 bg-[var(--card)] border border-red-200 dark:border-red-900/30 rounded-3xl p-6">
@@ -225,14 +240,14 @@ function BrowseMenuContent() {
               <span className="font-medium text-[#596B45]">Only Approved Menus</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
               {items.map((item) => (
                 <MenuCard key={item._id} item={item} />
               ))}
             </div>
           </div>
         )}
-      </main>
+      </Container>
 
       <Footer />
     </div>

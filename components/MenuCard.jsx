@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MapPin, Heart, Star, ArrowRight, Store } from "lucide-react";
@@ -12,6 +13,7 @@ export function MenuCard({ item }) {
   const router = useRouter();
   const { data: session } = useSession();
   const [isFavorite, setIsFavorite] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const displayImage =
     item.images && item.images.length > 0 && item.images[0]
@@ -37,16 +39,25 @@ export function MenuCard({ item }) {
 
   return (
     <div className="group relative flex flex-col h-full rounded-3xl bg-white dark:bg-[#24242A] border border-[#E8EDF4] dark:border-[#333338] overflow-hidden shadow-xs hover:shadow-xl hover:border-[#E66A2C]/30 hover:-translate-y-1 transition-all duration-300">
-      {/* Food Photography Container */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#F4F6FA] dark:bg-[#1F1F24] shrink-0">
-        <img
+      {/* Food Photography Container (Aspect Ratio Reserved) */}
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#E8EDF4] dark:bg-[#1F1F24] shrink-0">
+        {!imgLoaded && (
+          <div className="absolute inset-0 bg-[#E8EDF4] dark:bg-[#1F1F24] animate-pulse" />
+        )}
+
+        <Image
           src={displayImage}
           alt={item.itemName}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+          className={`object-cover group-hover:scale-105 transition-transform duration-500 ease-out ${
+            imgLoaded ? "opacity-100" : "opacity-0"
+          }`}
+          onLoad={() => setImgLoaded(true)}
         />
 
         {/* Category Pill */}
-        <div className="absolute top-3 left-3">
+        <div className="absolute top-3 left-3 z-10">
           <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#24242A]/80 backdrop-blur-md text-white border border-white/10 shadow-xs">
             {item.category}
           </span>
@@ -56,7 +67,7 @@ export function MenuCard({ item }) {
         <button
           onClick={handleFavoriteToggle}
           aria-label="Add to favorites"
-          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 dark:bg-[#24242A]/90 backdrop-blur-md flex items-center justify-center text-[#24242A] dark:text-white hover:text-red-500 transition-colors shadow-sm cursor-pointer"
+          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 dark:bg-[#24242A]/90 backdrop-blur-md flex items-center justify-center text-[#24242A] dark:text-white hover:text-red-500 transition-colors shadow-sm cursor-pointer"
         >
           <Heart
             className={`w-4 h-4 ${
@@ -67,7 +78,7 @@ export function MenuCard({ item }) {
 
         {/* Location pill on image */}
         {locationText && (
-          <div className="absolute bottom-3 left-3">
+          <div className="absolute bottom-3 left-3 z-10">
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-white/90 dark:bg-[#24242A]/90 backdrop-blur-md text-[#24242A] dark:text-white shadow-xs">
               <MapPin className="w-3 h-3 text-[#E66A2C]" />
               {locationText.split(",")[0]}
