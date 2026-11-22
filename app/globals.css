@@ -33,6 +33,10 @@ html {
   --color-accent-foreground: var(--accent-foreground);
 }
 
+body,html{
+ scroll-behavior: smooth;
+}
+
 :root {
   --background: #F4F6FA;
   --foreground: #24242A;

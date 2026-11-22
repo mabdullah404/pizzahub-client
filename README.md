@@ -1,207 +1,213 @@
-# 🍕 PizzaHub — Next.js 16 Client Frontend
+# 🍕 PizzaHub — Frontend Client
 
-PizzaHub is a modern, responsive, role-based Italian pizza ordering and restaurant management platform built with Next.js 16 App Router and Tailwind CSS.
+[![Next.js](https://img.shields.io/badge/Next.js-16.4.6-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.0.0-blue?style=for-the-badge&logo=react)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Better Auth](https://img.shields.io/badge/Better_Auth-1.2.0-orange?style=for-the-badge)](https://www.better-auth.com/)
+[![Stripe](https://img.shields.io/badge/Stripe-Checkout-6772E5?style=for-the-badge&logo=stripe)](https://stripe.com/)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
 
-- **Live Client URL**: [https://pizzahub-client-tan.vercel.app](https://pizzahub-client-tan.vercel.app)
-- **Live Server API**: [https://pizzahub-server-mu.vercel.app](https://pizzahub-server-mu.vercel.app)
-- **Client GitHub**: [https://github.com/mabdullah404/pizzahub-client](https://github.com/mabdullah404/pizzahub-client)
-- **Server GitHub**: [https://github.com/mabdullah404/pizzahub-server](https://github.com/mabdullah404/pizzahub-server)
-
----
-
-## 🎨 Design System: Italian Premium
-
-The application follows an authentic, warm, and elegant Italian Premium visual identity:
-
-- **Primary Red**: `#A92E24`
-- **Dark Red**: `#78231E`
-- **Warm Cream**: `#FAF5EB`
-- **Soft Cream**: `#F2E9D9`
-- **Olive Green**: `#596B45`
-- **Charcoal**: `#29251F`
-- **Muted Text**: `#777168`
-- **Typography**: `Playfair Display` for headings and `Inter` for body copy.
-- **Dark/Light Mode**: Full theme toggle support with customized dark mode tokens preserving the Italian culinary ambiance.
+**PizzaHub** is a production-ready, full-stack, role-based Italian artisan pizza ordering and restaurant management platform. Built with the **Next.js 16 App Router**, **React 19**, and **Tailwind CSS**, it delivers a seamless culinary marketplace experience for Customers, Pizzeria Vendors, and Platform Administrators.
 
 ---
 
-## 🛠️ Technology Stack & npm Packages
+## 🌐 Live Deployments & Repositories
 
-- **Framework**: Next.js 16.4.6 (App Router)
-- **UI & Library**: React 19, Tailwind CSS v4, Lucide React
-- **Authentication**: Better Auth with MongoDB Adapter & Google OAuth
-- **Theme Management**: `next-themes` (Dark / Light mode toggle)
-- **Feedback & Notifications**: `sonner` toast notifications
-- **Utilities**: `clsx`, `tailwind-merge`, `zod`
-- **Payments**: `@stripe/stripe-js`
+| Component | URL / Repository |
+|---|---|
+| **Live Client Application** | [https://pizzahub-client-tan.vercel.app](https://pizzahub-client-tan.vercel.app) |
+| **Live Backend API** | [https://pizzahub-server-mu.vercel.app](https://pizzahub-server-mu.vercel.app) |
+| **Client GitHub Repository** | [https://github.com/mabdullah404/pizzahub-client](https://github.com/mabdullah404/pizzahub-client) |
+| **Server GitHub Repository** | [https://github.com/mabdullah404/pizzahub-server](https://github.com/mabdullah404/pizzahub-server) |
 
 ---
 
-## 📁 Client Folder Structure
+## 🎨 Italian Premium Design System
+
+The platform's user interface is inspired by traditional Italian trattorias and artisanal woodfired pizzerias:
+
+- **Primary Rustic Red (`#A92E24`)**: Signature Italian pizza crust and marinara tone.
+- **Dark Wine Red (`#78231E`)**: Hover and active accent states.
+- **Warm Olive Green (`#596B45`)**: Fresh basil and Mediterranean ingredient accents.
+- **Warm Cream & Soft Beige (`#FAF5EB`, `#F2E9D9`)**: Gentle, appetizing backgrounds.
+- **Typography**: `Playfair Display` for elegant headlines paired with `Inter` for crisp readability.
+- **Dual Theme Support**: System-aware Dark and Light modes powered by `next-themes` with custom CSS variables.
+
+---
+
+## 👥 Role-Based Capabilities
+
+```
+┌────────────────────────────────────────────────────────┐
+│                        PIZZAHUB                        │
+├───────────────────┬──────────────────┬─────────────────┤
+│     CUSTOMER      │      VENDOR      │      ADMIN      │
+├───────────────────┼──────────────────┼─────────────────┤
+│ • Browse & Search │ • Menu Catalog   │ • User Control  │
+│ • Filter & Sort   │ • Add New Pizzas │ • Block/Unblock │
+│ • Multi-image View│ • ImgBB Uploads  │ • Menu Review   │
+│ • Custom Orders   │ • Order Dispatch │ • Approve/Reject│
+│ • Live Timeline   │ • Free Plan Cap  │ • Financials    │
+│ • Order History   │ • Stripe Premium │ • System Health │
+└───────────────────┴──────────────────┴─────────────────┘
+```
+
+### 1. 🍕 Customer Experience
+- **Interactive Menu Exploration**: Advanced live search by pizza name, category filter, city/location filter, and dynamic price sorting (`Low to High` / `High to Low`).
+- **Item Details & Gallery**: High-resolution multi-image showcase with interactive thumbnail previews.
+- **Order Placement**: Simple ordering modal capturing delivery date, address, and special preparation instructions. Prevents accidental duplicate orders for the same day.
+- **Order Status Tracking**: Visual multi-stage tracking timeline (`Pending` ➔ `Accepted` ➔ `Delivered` / `Cancelled`).
+- **Order Cancellation**: Real-time cancellation capability for pending orders.
+
+### 2. 👨‍🍳 Vendor (Pizzeria) Portal
+- **Culinary Operations Overview**: Metric cards showing active menu items, pending orders, completed deliveries, and subscription tier status.
+- **Menu Management**: Full CRUD capabilities for pizzas, ingredients, pricing, and category assignments.
+- **Image Hosting with ImgBB**: Multi-image file selection with client-side preview, validation, and automated cloud upload.
+- **Tier Enforcement**: Free Plan automatically enforces a maximum of 3 active items.
+- **Stripe Monetization**: One-click subscription upgrade to **Premium Pizzeria** ($29/month) unlocking unlimited menu items and homepage featured placement.
+- **Order Dispatch**: Accept or Reject incoming customer orders with immutable state decisions.
+
+### 3. 🛡️ Admin Moderation Suite
+- **System Metrics**: Real-time counts of total users, active vendors, customers, catalog items, and gross platform revenue.
+- **User Management**: Search users by name/email, filter by role, and securely suspend/block abusive accounts.
+- **Menu Moderation**: Review pending pizza submissions from vendors with instant Approve or Reject actions.
+- **Transaction Ledger**: Read-only audit log tracking all Stripe subscription payments and session IDs.
+
+---
+
+## 🛠️ Technology Stack
+
+| Category | Technology | Purpose |
+|---|---|---|
+| **Framework** | Next.js 16.4.6 (App Router) | Server-rendered pages, API routes, Turbopack builds |
+| **UI Library** | React 19 | Component hierarchy and state management |
+| **Styling** | Tailwind CSS v4 | Utility-first styling and responsive layouts |
+| **Icons** | Lucide React | Clean, scalable vector icons |
+| **Authentication** | Better Auth + MongoDB Adapter | Email/password, Google OAuth, and secure session management |
+| **Theming** | `next-themes` | Persistent dark and light mode toggle |
+| **Notifications** | `sonner` | Lightweight, customizable toast notifications |
+| **Payments** | `@stripe/stripe-js` | Secure vendor subscription checkout redirect |
+| **Data Fetching** | Native Fetch API | Resilient HTTP requests with bearer authorization |
+
+---
+
+## 📁 Project Directory Structure
 
 ```text
-PizzaHub-Client/
-│
+pizzahub-client/
 ├── app/
 │   ├── (auth)/
-│   │   ├── sign-in/page.jsx           # Email & Google Sign In with role redirect
-│   │   ├── sign-up/page.jsx           # Role selection (Customer / Vendor)
-│   │   └── layout.jsx                 # Dedicated authentication layout
-│   │
-│   ├── api/auth/[...all]/route.js     # Better Auth Next.js catch-all API handler
-│   │
-│   ├── browse-menu/page.jsx           # Challenge 1: Advanced Search & Filter
-│   ├── menu/[id]/page.jsx             # Item Details, multi-image gallery & order form
-│   │
+│   │   ├── sign-in/page.jsx           # Email & Google Sign In with role redirection
+│   │   ├── sign-up/page.jsx           # Public registration (Customer / Vendor)
+│   │   └── layout.jsx                 # Authentication layout wrapper
+│   ├── api/
+│   │   └── auth/[...all]/route.js     # Better Auth catch-all route handler
+│   ├── browse-menu/page.jsx           # Advanced search, category & location filters
+│   ├── menu/[id]/page.jsx             # Detailed pizza page, gallery & order form
 │   ├── dashboard/
-│   │   ├── layout.jsx                 # Dashboard root layout
-│   │   ├── vendor/                    # Vendor portal (My items, Add, Orders, Subscription)
-│   │   ├── customer/                  # Customer portal (Overview, My Orders, Timeline)
-│   │   └── admin/                     # Admin panel (Users, Menus, Transactions)
-│   │
+│   │   ├── customer/                  # Customer overview, orders & profile
+│   │   ├── vendor/                    # Vendor overview, menu CRUD, orders & subscription
+│   │   └── admin/                     # Admin platform stats, users & menu moderation
 │   ├── checkout/
-│   │   ├── success/page.jsx           # Subscription success confirmation
-│   │   └── cancel/page.jsx            # Subscription cancelled notice
-│   │
-│   ├── layout.js                      # Root layout with fonts, ThemeProvider & Sonner
-│   ├── page.js                        # Italian Premium Homepage
-│   ├── loading.jsx                    # Pizza preparation loader
-│   ├── error.jsx                      # Global error boundary
-│   ├── not-found.jsx                  # Custom Italian 404 screen
-│   └── globals.css                    # Tailwind CSS v4 variables
-│
+│   │   ├── success/page.jsx           # Stripe success redirection handler
+│   │   └── cancel/page.jsx            # Stripe cancellation handler
+│   ├── layout.js                      # Root application layout with fonts & ThemeProvider
+│   ├── page.js                        # Italian Premium landing page
+│   ├── loading.jsx                    # Custom pizza preparation loading state
+│   ├── not-found.jsx                  # Custom 404 error page
+│   └── globals.css                    # Tailwind CSS v4 design tokens
 ├── components/
-│   ├── Navbar.jsx                     # Dynamic responsive navigation & role links
-│   ├── Footer.jsx                     # Italian footer with modern X logo
-│   ├── MenuCard.jsx                   # Reusable equal-sized pizza card
+│   ├── Navbar.jsx                     # Dynamic navigation with live session state
+│   ├── Footer.jsx                     # Footer with business links and branding
+│   ├── MenuCard.jsx                   # Standardized pizza card component
+│   ├── HeroSection.jsx                # Landing page hero with quick search
+│   ├── CategorySection.jsx            # Category carousel and filter triggers
+│   ├── FeaturedMenu.jsx               # Featured pizzas grid for approved items
 │   ├── DashboardSidebar.jsx           # Role-adaptive sidebar navigation
-│   ├── ThemeToggle.jsx                # Dark / Light mode toggle
-│   ├── theme-provider.jsx             # Next-themes client provider
-│   ├── HeroSection.jsx                # Modern Hero layout
-│   ├── CustomerAvatars.jsx            # Customer proof badge
-│   ├── DeliveryPath.jsx               # Visual delivery curve illustration
-│   ├── FeaturePills.jsx               # Feature tags strip
-│   ├── FeaturedMenu.jsx               # Dynamic featured pizzas grid
-│   ├── CategorySection.jsx            # 6 pizza categories
-│   ├── WhyChooseUs.jsx                # Why Choose PizzaHub benefits
-│   └── HowItWorks.jsx                 # How ordering works steps
-│
+│   └── ThemeToggle.jsx                # Dark / Light mode switcher
 ├── lib/
-│   ├── api/                           # Modular API clients (menu, orders, users, etc.)
-│   ├── core/server.js                 # Server-side auth, token extraction & requireRole
-│   ├── constants/images.js            # Local Unsplash images & category mapping
-│   ├── auth.js                        # Better Auth server configuration & MongoDB adapter
-│   ├── auth-client.js                 # Better Auth browser client utilities
-│   └── utils.js                       # Utility functions & currency formatters
-│
-├── public/
-│   └── images/                        # High-resolution food photography
-│
-├── scripts/
-│   ├── seedUsers.js                   # Seeder for demo accounts
-│   ├── seedAdmin.js                   # Admin verification script
-│   └── seedAdminPassword.js           # Password hash & credential seeder
-│
-├── .env.example
-├── .gitignore
+│   ├── api/                           # Modular API clients (menu, orders, payments, users)
+│   ├── auth.js                        # Better Auth server configuration
+│   ├── auth-client.js                 # Better Auth React client hooks
+│   └── utils/                         # Helper functions and API URL resolver
+├── public/                            # Static assets and culinary photography
+├── .env.example                       # Environment template with dummy placeholders
 ├── package.json
 └── README.md
 ```
 
 ---
 
-## ⚙️ Environment Variables (`.env`)
+## ⚙️ Environment Configuration
 
-Create `.env` in `pizzahub-client/`:
-
-```env
-BETTER_AUTH_SECRET=your_better_auth_secret_here
-BETTER_AUTH_URL=http://localhost:3000
-BETTER_AUTH_DB_URL=your_mongodb_atlas_connection_string
-
-# Google OAuth Credentials
-GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-# Express REST API Server URL
-NEXT_PUBLIC_SERVER_URL=http://localhost:5000
-NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
-```
-
----
-
-## 🌟 Key Features & Requirements Implemented
-
-1. **Role-Based Authentication (Better Auth)**:
-   - Email/password and Google OAuth authentication.
-   - Public role selection during sign up: Customer or Vendor (Restaurant).
-   - Admin accounts are strictly protected from public signups.
-   - Immediate navbar updates on login/logout state changes.
-   - Server-side role protection in dashboard layouts (`requireRole`).
-   - Blocked user rejection with appropriate alerts.
-
-2. **Homepage**:
-   - Italian Premium Hero Banner with local food imagery.
-   - Database-driven Featured Pizzas section (approved items only).
-   - Category exploration (Classic, Vegetarian, Meat Lovers, Gourmet, Sides, Desserts).
-   - "Why Choose PizzaHub?" custom benefits section.
-   - "How PizzaHub Works" 3-step order process.
-   - Restaurant call-to-action banner.
-
-3. **Browse Menu (Challenge Requirement 1)**:
-   - Live search by pizza title or description.
-   - Filter by pizza category.
-   - Filter by restaurant location (Area/City).
-   - Sort by price ascending (`$ → $$$`) or descending (`$$$ → $`).
-   - One-click reset filters.
-
-4. **Item Details & Ordering**:
-   - Multiple images gallery with thumbnail selector.
-   - Real-time customer order modal with delivery date, address, and special instructions.
-   - Duplicate active order prevention on the same date.
-   - Strict authorization: only customers can order.
-
-5. **Vendor Dashboard**:
-   - Overview metrics: Total items, active items, pending orders, accepted orders.
-   - Menu Management: Create, update, toggle active status, and delete.
-   - **Free Plan Limit**: Automatically enforces maximum 3 active menu items.
-   - **ImgBB Image Upload**: File selection, preview, size validation, and hosted image retrieval.
-   - Order Dispatch: Accept or Reject customer orders once only.
-   - Stripe Subscription: Upgrade to Premium ($29/month) for unlimited items and featured homepage placement.
-
-6. **Customer Dashboard**:
-   - Order history with delivery schedules and pizzerias.
-   - **Order Status Timeline** (Optional Requirement 3): Live visual tracking (Order Placed → Reviewing → Woodfired Baking & Delivery).
-   - Cancellation of pending orders.
-
-7. **Admin Dashboard**:
-   - Platform metrics: Total users, vendors, customers, items, pending items, and total revenue.
-   - User Management: Search users, filter by role, Block / Unblock accounts.
-   - Menu Moderation: Review pending pizzas, Approve, Reject, or Delete.
-   - Read-only Stripe subscription transaction ledger.
-
-8. **Optional Features Included**:
-   - Dark / Light Mode Toggle (`next-themes`) with custom Italian tokens.
-   - Order Status Timeline on order details.
-   - Customer Wishlist / Favorites button.
-
----
-
-## 👤 Testing Accounts & Role Access
-
-Testing accounts are pre-configured in the platform database for evaluation. 
-In compliance with assignment security guidelines:
-- **Admin**: Credentials provided securely in the assignment submission portal (strictly protected from public registration).
-- **Vendor & Customer**: Register directly through public registration on `/sign-up` selecting Vendor (Restaurant Owner) or Customer role.
-
----
-
-## 🚀 Running Locally
+To configure the application locally, duplicate the provided `.env.example` file to create `.env.local`:
 
 ```bash
+cp .env.example .env.local
+```
+
+### Required Variables (Template)
+
+```env
+# Better Auth Configuration
+BETTER_AUTH_SECRET=your_better_auth_secret_here
+BETTER_AUTH_URL=http://localhost:3000
+BETTER_AUTH_DB_URL=your_mongodb_connection_string_here
+
+# Google OAuth Credentials (Optional for local dev)
+GOOGLE_CLIENT_ID=your_google_client_id_here
+GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+
+# Express REST API Server URL
+NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_SERVER_URL=http://localhost:5000
+```
+
+> **Security Note:** Never commit `.env` or `.env.local` files to version control. The repository `.gitignore` ensures all environment files containing secrets remain strictly local.
+
+---
+
+## 🚀 Getting Started Locally
+
+### Prerequisites
+- Node.js (v18.17.0 or higher recommended)
+- npm or pnpm or yarn
+- Running instance of the `pizzahub-server` REST API
+
+### 1. Clone & Install Dependencies
+```bash
+git clone https://github.com/mabdullah404/pizzahub-client.git
 cd pizzahub-client
 npm install
+```
+
+### 2. Configure Environment
+Create `.env.local` following the template above.
+
+### 3. Start Development Server
+```bash
 npm run dev
 ```
 
-Client runs on: `http://localhost:3000`
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
+
+### 4. Build for Production
+```bash
+npm run build
+npm run start
+```
+
+---
+
+## 🔒 Security Best Practices Implemented
+
+1. **Strict Client-Side Validation**: All forms (Sign Up, Item Creation, Order Placement) enforce strict validation schemas.
+2. **Server-Side Route Protection**: Protected routes check session tokens and user roles on every request; untrusted client data is never assumed valid.
+3. **Safe Storage**: No sensitive secrets or credentials exist in the client repository.
+4. **CORS & Credentials**: API calls seamlessly transmit credentials (`include`) and Bearer headers to the verified Express backend origin.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
