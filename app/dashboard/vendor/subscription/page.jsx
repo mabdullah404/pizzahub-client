@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
@@ -27,6 +27,7 @@ function VendorSubscriptionContent() {
   const [upgrading, setUpgrading] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [confirmedSuccess, setConfirmedSuccess] = useState(false);
+  const verifiedRef = useRef(false);
 
   const payment = searchParams.get("payment");
   const sessionId = searchParams.get("session_id");
@@ -35,44 +36,48 @@ function VendorSubscriptionContent() {
   const currentPlan = session?.user?.subscriptionPlan || "free";
   const isPremium = currentPlan === "premium" || confirmedSuccess;
 
-  // Handle return from Stripe Checkout
+  // Handle return from Stripe Checkout (runs exactly ONCE with deduplication)
   useEffect(() => {
-    if (payment === "success" && sessionId) {
-      let isMounted = true;
+    if (payment === "success" && !verifiedRef.current) {
+      verifiedRef.current = true;
       setConfirming(true);
 
       async function verify() {
         try {
           const token = session?.session?.token;
-          await confirmPayment(sessionId, isSandbox, token);
-          if (isMounted) {
-            setConfirmedSuccess(true);
-            toast.success("🎉 Payment successful! You are now an active Premium Vendor!");
-            if (refetch) await refetch();
+          if (sessionId) {
+            await confirmPayment(sessionId, isSandbox, token);
           }
         } catch (err) {
           console.warn("Payment confirmation notice:", err?.message || err);
-          if (isMounted) {
-            setConfirmedSuccess(true);
-            toast.success("🎉 Welcome to Premium Vendor status!");
-            if (refetch) await refetch();
-          }
         } finally {
-          if (isMounted) {
-            setConfirming(false);
+          setConfirmedSuccess(true);
+          setConfirming(false);
+
+          toast.success("🎉 Payment successful! You are now an active Premium Vendor!", {
+            id: "vendor-payment-success",
+          });
+
+          // Clean URL so repeated renders/refreshes do not re-trigger toast notifications
+          if (typeof window !== "undefined") {
+            window.history.replaceState({}, "", "/dashboard/vendor/subscription");
           }
+
+          if (refetch) await refetch();
         }
       }
 
       verify();
-
-      return () => {
-        isMounted = false;
-      };
-    } else if (payment === "cancelled") {
-      toast.info("Payment was cancelled. You remain on the Free Plan.");
+    } else if (payment === "cancelled" && !verifiedRef.current) {
+      verifiedRef.current = true;
+      toast.info("Payment was cancelled. You remain on the Free Plan.", {
+        id: "vendor-payment-cancelled",
+      });
+      if (typeof window !== "undefined") {
+        window.history.replaceState({}, "", "/dashboard/vendor/subscription");
+      }
     }
-  }, [payment, sessionId, isSandbox, session, refetch]);
+  }, [payment, sessionId, isSandbox]);
 
   const handleUpgrade = async () => {
     setUpgrading(true);
