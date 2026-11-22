@@ -6,7 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { MenuCard } from "@/components/MenuCard";
 import { getMenuItems } from "@/lib/api/menu-items";
-import { PIZZA_CATEGORIES, POPULAR_LOCATIONS } from "@/lib/constants/images";
+import { PIZZA_CATEGORIES, POPULAR_LOCATIONS } from "@/lib/constants/locations";
 import { Search, Filter, RotateCcw, Pizza, ArrowUpDown, Loader2 } from "lucide-react";
 
 function BrowseMenuContent() {

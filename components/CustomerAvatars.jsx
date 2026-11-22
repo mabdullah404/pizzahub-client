@@ -40,16 +40,12 @@ export function CustomerAvatars() {
             />
           </div>
         ))}
-        {/* +865 Badge matching reference */}
-        <div className="w-9 h-9 rounded-full bg-[#24242A] text-white text-[11px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#24242A] shadow-xs">
-          +865
-        </div>
       </div>
 
-      {/* Label matching reference */}
+      {/* Authentic community label */}
       <div className="text-left">
         <p className="text-xs sm:text-sm font-extrabold text-[#24242A] dark:text-white leading-tight">
-          5k+ Satisfied Clients
+          Fresh Handcrafted Pizza Community
         </p>
       </div>
     </div>

@@ -3,26 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, RotateCcw } from "lucide-react";
-
-const PIZZA_CATEGORIES = [
-  "All",
-  "Neapolitan",
-  "Roman Crust",
-  "Chicago Deep Dish",
-  "Sicilian Style",
-  "Artisan Special",
-  "Calzone & Sides",
-];
-
-const POPULAR_LOCATIONS = [
-  "All",
-  "Rome Downtown",
-  "Naples Central",
-  "Milan North",
-  "Florence Historic",
-  "Turin Quarter",
-  "Venice Cannaregio",
-];
+import { PIZZA_CATEGORIES, POPULAR_LOCATIONS } from "@/lib/constants/locations";
 
 export function HomeSearchFilter() {
   const router = useRouter();

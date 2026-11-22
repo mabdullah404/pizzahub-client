@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import { createMenuItem } from "@/lib/api/menu-items";
 import { uploadImage } from "@/lib/api/upload";
-import { PIZZA_CATEGORIES, POPULAR_LOCATIONS } from "@/lib/constants/images";
+import { PIZZA_CATEGORIES, DHAKA_LOCATIONS } from "@/lib/constants/locations";
 import { toast } from "sonner";
 import {
   Upload,
@@ -26,7 +26,7 @@ export default function AddMenuItemPage() {
   const [category, setCategory] = useState("Classic Pizzas");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [location, setLocation] = useState("Gulshan 2, Dhaka");
+  const [location, setLocation] = useState(DHAKA_LOCATIONS[0] || "Banani");
 
   // File Upload states
   const [imageFile, setImageFile] = useState(null);
@@ -216,16 +216,19 @@ export default function AddMenuItemPage() {
           {/* Location Area / City */}
           <div>
             <label className="block text-xs font-semibold text-[var(--foreground)] mb-1">
-              Pizzeria Location (Area / City) *
+              Pizzeria Location (Dhaka Area) *
             </label>
-            <input
-              type="text"
-              required
+            <select
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="e.g. Gulshan 2, Dhaka"
               className="w-full px-4 py-2.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[#A92E24]/30"
-            />
+            >
+              {DHAKA_LOCATIONS.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Description */}
