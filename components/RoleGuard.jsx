@@ -1,19 +1,21 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 
 export function RoleGuard({ allowedRole, children }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: session, isPending } = useSession();
 
   useEffect(() => {
     if (isPending) return;
 
     if (!session || !session.user) {
-      router.replace(`/sign-in?redirectTo=/dashboard/${allowedRole}`);
+      const destination = pathname || `/dashboard/${allowedRole}`;
+      router.replace(`/sign-in?redirectTo=${encodeURIComponent(destination)}`);
       return;
     }
 
@@ -28,7 +30,7 @@ export function RoleGuard({ allowedRole, children }) {
       else if (user.role === "vendor") router.replace("/dashboard/vendor");
       else router.replace("/dashboard/customer");
     }
-  }, [session, isPending, allowedRole, router]);
+  }, [session, isPending, allowedRole, router, pathname]);
 
   if (isPending) {
     return (
