@@ -26,9 +26,11 @@ function SignInContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const performSignIn = async (signInEmail, signInPassword) => {
     setLoading(true);
+    setErrorMessage("");
 
     try {
       const { data, error } = await signIn.email({
@@ -37,7 +39,9 @@ function SignInContent() {
       });
 
       if (error) {
-        toast.error(error.message || "Invalid email or password. Please try again.");
+        const msg = error.message || "Invalid email or password. Please check your credentials.";
+        setErrorMessage(msg);
+        toast.error(msg);
         setLoading(false);
         return;
       }
@@ -113,6 +117,13 @@ function SignInContent() {
         </div>
       )}
 
+      {errorMessage && (
+        <div className="p-3.5 rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 text-red-700 dark:text-red-300 text-xs flex items-center gap-2 animate-in fade-in">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
+
       {/* Google OAuth Button */}
       <button
         type="button"
@@ -165,7 +176,10 @@ function SignInContent() {
               required
               autoComplete="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errorMessage) setErrorMessage("");
+              }}
               placeholder="name@example.com"
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#F4F6FA] dark:bg-[#1F1F24] border border-[#E8EDF4] dark:border-[#333338] text-xs text-[#24242A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E66A2C]/30"
             />
@@ -183,7 +197,10 @@ function SignInContent() {
               required
               autoComplete="current-password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (errorMessage) setErrorMessage("");
+              }}
               placeholder="••••••••"
               className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#F4F6FA] dark:bg-[#1F1F24] border border-[#E8EDF4] dark:border-[#333338] text-xs text-[#24242A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E66A2C]/30"
             />
