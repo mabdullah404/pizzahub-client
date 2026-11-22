@@ -56,8 +56,19 @@ function SignInContent() {
         }
       }
 
-      // Hard navigation ensures browser commits cookies and server components load fresh session
-      window.location.replace(destination);
+      // Small grace delay ensures the browser's network layer has committed the session cookie
+      await new Promise((resolve) => setTimeout(resolve, 350));
+
+      // Client router navigation seamlessly loads the protected route
+      router.push(destination);
+      router.refresh();
+
+      // Fallback navigation in case client router is stalled
+      setTimeout(() => {
+        if (typeof window !== "undefined" && window.location.pathname !== destination) {
+          window.location.href = destination;
+        }
+      }, 1200);
     } catch (err) {
       console.error("Sign in exception:", err);
       toast.error(err.message || "Sign in failed.");
