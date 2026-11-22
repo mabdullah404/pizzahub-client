@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { MapPin, Phone, Mail, Clock, Pizza, ArrowRight } from "lucide-react";
 import { FOOTER_CONTACT } from "@/lib/constants/locations";
+import { Container } from "@/components/Container";
 
 export function Footer() {
   return (
     <footer id="contact" className="bg-[#1F1F24] text-white pt-16 pb-10 border-t border-[#333338]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-[#333338]">
           {/* 1. Logo & Short Description */}
           <div className="lg:col-span-2 space-y-4 pr-0 lg:pr-8">
@@ -129,7 +130,7 @@ export function Footer() {
             </Link>
           </div>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }

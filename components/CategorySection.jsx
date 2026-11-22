@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { LOCAL_IMAGES } from "@/lib/constants/images";
+import { Container } from "@/components/Container";
 
 export function CategorySection() {
   const categories = [
@@ -39,7 +40,7 @@ export function CategorySection() {
 
   return (
     <section className="py-16 sm:py-24 bg-white dark:bg-[#1F1F24] border-y border-[#E8EDF4] dark:border-[#333338] transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-3">
           <span className="text-[11px] font-extrabold text-[#E66A2C] uppercase tracking-widest">
             EXPLORE OUR FLAVORS
@@ -87,7 +88,7 @@ export function CategorySection() {
             </Link>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

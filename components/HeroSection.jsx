@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowRight, Flame, Search } from "lucide-react";
 import { CustomerAvatars } from "@/components/CustomerAvatars";
 import { FeaturePills } from "@/components/FeaturePills";
+import { Container } from "@/components/Container";
 
 export function HeroSection() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export function HeroSection() {
 
   return (
     <section className="relative overflow-hidden bg-[#F4F6FA] dark:bg-[#18181B] transition-colors pt-8 sm:pt-12 lg:pt-16 pb-0">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <Container className="relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center pb-12 sm:pb-16 lg:pb-20">
           {/* Left Column: Typography & Action Buttons */}
           <div className="lg:col-span-6 space-y-5 text-left">
@@ -125,7 +126,7 @@ export function HeroSection() {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
 
       {/* Bottom Hero Strip (About Us + Feature Pills) */}
       <FeaturePills />

@@ -1,4 +1,5 @@
 import { Flame, Clock, ShieldCheck, HeartHandshake } from "lucide-react";
+import { Container } from "@/components/Container";
 
 export function WhyChooseUs() {
   const points = [
@@ -26,7 +27,7 @@ export function WhyChooseUs() {
 
   return (
     <section className="py-16 sm:py-24 bg-[#F4F6FA] dark:bg-[#18181B] transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-3">
           <span className="text-[11px] font-extrabold text-[#E66A2C] uppercase tracking-widest">
             THE PIZZAHUB DIFFERENCE
@@ -60,7 +61,7 @@ export function WhyChooseUs() {
             );
           })}
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

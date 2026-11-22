@@ -1,6 +1,7 @@
 "use client";
 
 import { Sparkles, Clock, Zap, Utensils, Award } from "lucide-react";
+import { Container } from "@/components/Container";
 
 export function FeaturePills() {
   const features = [
@@ -13,7 +14,7 @@ export function FeaturePills() {
 
   return (
     <div className="border-t border-[#E8EDF4] dark:border-[#333338] bg-white/70 dark:bg-[#1F1F24] py-8 sm:py-10 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Left: About Us Statement (Matches Reference) */}
           <div className="space-y-1.5 max-w-xl">
@@ -41,7 +42,7 @@ export function FeaturePills() {
             })}
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

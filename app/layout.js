@@ -1,6 +1,7 @@
 import { Playfair_Display, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)] antialiased">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <ScrollToTop />
           {children}
           {/* Sonner Toaster configured to display cleanly one toast at a time without stacking/duplicates */}
           <Toaster
