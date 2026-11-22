@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
+  AlertTriangle,
 } from "lucide-react";
 
 function SignUpContent() {
@@ -31,6 +32,7 @@ function SignUpContent() {
   const [role, setRole] = useState(initialRole);
   const [businessName, setBusinessName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
@@ -44,15 +46,19 @@ function SignUpContent() {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
 
     const passError = validatePassword(password);
     if (passError) {
+      setErrorMessage(passError);
       toast.error(passError);
       return;
     }
 
     if (role === "vendor" && !businessName.trim()) {
-      toast.error("Please enter your restaurant / business name.");
+      const msg = "Please enter your restaurant / business name.";
+      setErrorMessage(msg);
+      toast.error(msg);
       return;
     }
 
@@ -68,7 +74,9 @@ function SignUpContent() {
       });
 
       if (error) {
-        toast.error(error.message || "Sign up failed. Please try again.");
+        const msg = error.message || "Sign up failed. Please try again.";
+        setErrorMessage(msg);
+        toast.error(msg);
         setLoading(false);
         return;
       }
@@ -91,7 +99,9 @@ function SignUpContent() {
       }, 1500);
     } catch (err) {
       console.error("Sign up exception:", err);
-      toast.error(err.message || "Failed to register account.");
+      const msg = err.message || "Failed to register account.";
+      setErrorMessage(msg);
+      toast.error(msg);
       setLoading(false);
     }
   };
@@ -188,6 +198,13 @@ function SignUpContent() {
           Or register with email
         </span>
       </div>
+
+      {errorMessage && (
+        <div className="p-3.5 rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 text-red-700 dark:text-red-300 text-xs flex items-center gap-2 animate-in fade-in">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
 
       {/* Registration Form */}
       <form onSubmit={handleSignUp} className="space-y-4">
