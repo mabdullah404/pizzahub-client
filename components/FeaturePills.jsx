@@ -1,11 +1,11 @@
 "use client";
 
-import { Sparkles, Tag, Zap, Utensils, Award } from "lucide-react";
+import { Sparkles, Clock, Zap, Utensils, Award } from "lucide-react";
 
 export function FeaturePills() {
   const features = [
     { name: "Easy Ordering", icon: Zap },
-    { name: "Deals & Discounts", icon: Tag },
+    { name: "Real-time Order Status", icon: Clock },
     { name: "Fast Delivery", icon: Sparkles },
     { name: "Delicious Varieties", icon: Utensils },
     { name: "Quality Ingredients", icon: Award },
