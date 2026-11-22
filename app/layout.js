@@ -31,13 +31,15 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)] antialiased">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}
-          {/* Sonner Toaster configured with 90px offset to sit cleanly below the sticky navbar */}
+          {/* Sonner Toaster configured to display cleanly one toast at a time without stacking/duplicates */}
           <Toaster
             position="top-right"
             richColors
             closeButton
             theme="system"
             offset="88px"
+            visibleToasts={1}
+            duration={2800}
             toastOptions={{
               style: {
                 borderRadius: "14px",

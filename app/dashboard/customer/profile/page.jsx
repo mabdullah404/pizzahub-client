@@ -13,9 +13,9 @@ import {
   Loader2,
   CheckCircle2,
   ShieldCheck,
+  ShoppingBag,
   Upload,
   Trash2,
-  Sparkles,
 } from "lucide-react";
 
 export default function CustomerProfilePage() {
@@ -26,6 +26,7 @@ export default function CustomerProfilePage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [image, setImage] = useState("");
+  const [role, setRole] = useState("customer");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -40,6 +41,7 @@ export default function CustomerProfilePage() {
           setEmail(res.data.email || "");
           setPhone(res.data.phone || "");
           setImage(res.data.image || "");
+          setRole(res.data.role || "customer");
         }
       } catch (err) {
         console.error("Profile load error:", err);
@@ -50,32 +52,30 @@ export default function CustomerProfilePage() {
     loadProfile();
   }, [session]);
 
-  // Handle direct file upload from PC
+  // Handle direct file upload from computer
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error("Image file is too large. Maximum size is 5MB.");
       return;
     }
 
-    // Validate type
     if (!file.type.startsWith("image/")) {
-      toast.error("Please select a valid image file (PNG, JPG, or WEBP).");
+      toast.error("Please select a valid image file (JPG, PNG, or WebP).");
       return;
     }
 
     setUploadingImage(true);
-    const toastId = toast.loading("Uploading photo from your PC to ImgBB...");
+    const toastId = toast.loading("Uploading profile photo...");
 
     try {
       const token = session?.session?.token;
       const uploadedUrl = await uploadImage(file, token);
 
       setImage(uploadedUrl);
-      toast.success("Profile photo uploaded to ImgBB successfully!", { id: toastId });
+      toast.success("Profile photo updated successfully!", { id: toastId });
     } catch (err) {
       console.error("Image upload failed:", err);
       toast.error(err.message || "Failed to upload image. Please try again.", { id: toastId });
@@ -109,7 +109,7 @@ export default function CustomerProfilePage() {
       // Refresh session so top navbar reflects the new photo and name immediately
       if (refetch) await refetch();
 
-      toast.success("Profile updated successfully!");
+      toast.success("Profile saved successfully!");
     } catch (err) {
       toast.error(err.message || "Failed to update profile.");
     } finally {
@@ -120,7 +120,7 @@ export default function CustomerProfilePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <Loader2 className="w-8 h-8 animate-spin text-[#A92E24]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#E66A2C]" />
       </div>
     );
   }
@@ -128,63 +128,69 @@ export default function CustomerProfilePage() {
   const initial = (name || email || "C").charAt(0).toUpperCase();
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      {/* Page Title */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-[var(--card)] border border-[var(--border)] shadow-sm space-y-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-[#A92E24]">
-            Customer Account
-          </span>
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
-            Active
-          </span>
-        </div>
-        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[var(--foreground)]">
+    <div className="max-w-4xl mx-auto space-y-8">
+      {/* Page Header */}
+      <div>
+        <span className="text-[11px] font-bold uppercase tracking-wider text-[#E66A2C]">
+          Account Settings
+        </span>
+        <h1 className="font-serif text-2xl sm:text-3xl font-black text-[var(--foreground)] mt-1">
           Profile Settings
         </h1>
-        <p className="text-xs sm:text-sm text-[var(--muted-foreground)]">
-          Manage your personal customer profile, delivery phone number, and avatar photo.
+        <p className="text-xs sm:text-sm text-[var(--muted-foreground)] mt-1">
+          Manage your personal account profile, contact details, and account preferences.
         </p>
       </div>
 
       {/* Profile Picture Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-[var(--card)] border border-[var(--border)] shadow-sm">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--foreground)] mb-4">
-          Profile Avatar
-        </h2>
+      <div className="p-6 sm:p-8 rounded-3xl bg-[var(--card)] border border-[var(--border)] shadow-xs">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--foreground)]">
+            Profile Picture
+          </h2>
+          {image && (
+            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Active Photo
+            </span>
+          )}
+        </div>
 
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          {/* Avatar Container with Hover Upload Overlay */}
+          {/* Avatar Container with High-Resolution Render */}
           <div className="relative group shrink-0">
-            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-[var(--card)] ring-2 ring-[#A92E24]/30 shadow-md bg-[#A92E24]/10 flex items-center justify-center">
+            <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden border-2 border-[var(--border)] shadow-sm bg-[var(--background)] flex items-center justify-center">
               {image ? (
                 <img
                   src={image}
                   alt={name || "Profile"}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-full"
+                  loading="eager"
+                  decoding="async"
                 />
               ) : (
-                <span className="font-serif text-4xl font-bold text-[#A92E24]">
-                  {initial}
-                </span>
+                <div className="flex flex-col items-center justify-center text-center p-3 text-[var(--muted-foreground)]">
+                  <User className="w-10 h-10 text-[#E66A2C] mb-1 opacity-80" />
+                  <span className="text-xs font-bold text-[var(--foreground)]">{initial}</span>
+                </div>
               )}
             </div>
 
             {/* Upload Spinner Overlay */}
             {uploadingImage && (
-              <div className="absolute inset-0 rounded-full bg-black/60 flex flex-col items-center justify-center text-white text-xs gap-1">
+              <div className="absolute inset-0 rounded-full bg-black/60 flex flex-col items-center justify-center text-white text-xs gap-1.5 backdrop-blur-xs">
                 <Loader2 className="w-6 h-6 animate-spin text-white" />
-                <span>Uploading...</span>
+                <span className="font-semibold text-[11px]">Uploading...</span>
               </div>
             )}
 
-            {/* Camera Badge Trigger */}
+            {/* Quick Camera Trigger */}
             <button
               type="button"
               disabled={uploadingImage}
               onClick={() => fileInputRef.current?.click()}
-              aria-label="Upload photo from PC"
-              className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-[#A92E24] hover:bg-[#78231E] text-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 cursor-pointer disabled:opacity-50"
+              aria-label="Upload photo"
+              className="absolute bottom-0 right-0 w-9 h-9 rounded-full bg-[#E66A2C] hover:bg-[#D4591D] text-white flex items-center justify-center shadow-md transition-transform hover:scale-105 cursor-pointer disabled:opacity-50"
             >
               <Camera className="w-4 h-4" />
             </button>
@@ -194,17 +200,17 @@ export default function CustomerProfilePage() {
           <div className="space-y-3 text-center sm:text-left flex-1">
             <div>
               <p className="text-sm font-bold text-[var(--foreground)]">
-                Upload from your Computer
+                Personal Avatar
               </p>
-              <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
-                Select an image file from your PC. It will be uploaded automatically to ImgBB and saved in the database.
+              <p className="text-xs text-[var(--muted-foreground)] mt-1 leading-relaxed">
+                Upload a clear profile photo. This photo is shown when writing pizza reviews and tracking order delivery status.
               </p>
-              <p className="text-[11px] text-[var(--muted-foreground)] mt-1">
-                Supported formats: <strong>PNG, JPG, WEBP</strong> (Max size: 5MB).
+              <p className="text-[11px] text-[var(--muted-foreground)] mt-1.5">
+                Recommended: Square JPG, PNG, or WebP (at least 400×400px, max 5MB).
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 pt-1">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -217,7 +223,7 @@ export default function CustomerProfilePage() {
                 type="button"
                 disabled={uploadingImage}
                 onClick={() => fileInputRef.current?.click()}
-                className="px-4 py-2 rounded-xl bg-[#A92E24] hover:bg-[#78231E] text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition cursor-pointer disabled:opacity-60"
+                className="px-4 py-2 rounded-xl bg-[#24242A] dark:bg-white hover:bg-[#383842] dark:hover:bg-[#E8EDF4] text-white dark:text-[#24242A] text-xs font-bold flex items-center gap-2 shadow-xs transition-all cursor-pointer disabled:opacity-60"
               >
                 {uploadingImage ? (
                   <>
@@ -227,7 +233,7 @@ export default function CustomerProfilePage() {
                 ) : (
                   <>
                     <Upload className="w-3.5 h-3.5" />
-                    <span>Choose Photo from PC</span>
+                    <span>{image ? "Change Photo" : "Choose File"}</span>
                   </>
                 )}
               </button>
@@ -236,7 +242,7 @@ export default function CustomerProfilePage() {
                 <button
                   type="button"
                   onClick={handleRemoveImage}
-                  className="px-3 py-2 rounded-xl border border-[var(--border)] hover:bg-red-500/10 hover:border-red-500/30 text-xs font-medium text-red-600 dark:text-red-400 transition flex items-center gap-1.5 cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl border border-[var(--border)] hover:bg-red-500/10 hover:border-red-500/30 text-xs font-semibold text-red-600 dark:text-red-400 transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Remove</span>
@@ -248,16 +254,16 @@ export default function CustomerProfilePage() {
       </div>
 
       {/* Profile Details Form */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-[var(--card)] border border-[var(--border)] shadow-sm">
+      <div className="p-6 sm:p-8 rounded-3xl bg-[var(--card)] border border-[var(--border)] shadow-xs">
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email Address (Read-only Better Auth) */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-xs font-semibold text-[var(--foreground)]">
+              <label className="block text-xs font-bold text-[var(--foreground)]">
                 Account Email
               </label>
-              <span className="flex items-center gap-1 text-[11px] text-[var(--muted-foreground)]">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                <ShieldCheck className="w-3.5 h-3.5" />
                 Verified via Better Auth
               </span>
             </div>
@@ -267,14 +273,14 @@ export default function CustomerProfilePage() {
                 type="email"
                 disabled
                 value={email}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[var(--muted)]/50 border border-[var(--border)] text-xs text-[var(--muted-foreground)] cursor-not-allowed"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[var(--muted)]/40 border border-[var(--border)] text-xs text-[var(--muted-foreground)] cursor-not-allowed select-none"
               />
             </div>
           </div>
 
           {/* Full Name */}
           <div>
-            <label className="block text-xs font-semibold text-[var(--foreground)] mb-1">
+            <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
               Full Name *
             </label>
             <div className="relative">
@@ -285,15 +291,15 @@ export default function CustomerProfilePage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your full name"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[#A92E24]/30"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[#E66A2C]/30"
               />
             </div>
           </div>
 
           {/* Phone Number */}
           <div>
-            <label className="block text-xs font-semibold text-[var(--foreground)] mb-1">
-              Delivery Phone Number
+            <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
+              Delivery Contact Phone
             </label>
             <div className="relative">
               <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
@@ -302,12 +308,24 @@ export default function CustomerProfilePage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+880 1700-000000"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[#A92E24]/30"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[#E66A2C]/30"
               />
             </div>
             <p className="text-[11px] text-[var(--muted-foreground)] mt-1">
-              Used by pizzeria couriers to contact you upon pizza arrival.
+              Used by pizzeria riders to contact you for fast pizza delivery.
             </p>
+          </div>
+
+          {/* Role Status Tag */}
+          <div className="p-4 rounded-2xl bg-[var(--muted)]/20 border border-[var(--border)] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4 text-[#E66A2C]" />
+              <span className="text-xs font-semibold">Account Role:</span>
+              <span className="text-xs font-bold uppercase text-[#E66A2C]">{role}</span>
+            </div>
+            <span className="text-[11px] text-[var(--muted-foreground)]">
+              PizzaHub Customer Member
+            </span>
           </div>
 
           {/* Save Changes Action */}
@@ -315,7 +333,7 @@ export default function CustomerProfilePage() {
             <button
               type="submit"
               disabled={saving || uploadingImage}
-              className="px-6 py-2.5 rounded-xl bg-[#A92E24] hover:bg-[#78231E] text-white font-semibold text-xs uppercase tracking-wider flex items-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-60"
+              className="px-6 py-2.5 rounded-full bg-[#E66A2C] hover:bg-[#D4591D] text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-60"
             >
               {saving ? (
                 <>
@@ -325,7 +343,7 @@ export default function CustomerProfilePage() {
               ) : (
                 <>
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>Save Changes</span>
+                  <span>Save Profile Changes</span>
                 </>
               )}
             </button>

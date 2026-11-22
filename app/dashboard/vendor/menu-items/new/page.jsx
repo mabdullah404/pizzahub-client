@@ -58,7 +58,7 @@ export default function AddMenuItemPage() {
     setUploadedUrl(""); // Reset if user changed file
   };
 
-  // Upload image to ImgBB
+  // Upload image
   const handleUploadImage = async () => {
     if (!imageFile) {
       toast.error("Please choose an image file first.");
@@ -72,10 +72,10 @@ export default function AddMenuItemPage() {
       const token = session?.session?.token;
       const url = await uploadImage(imageFile, token);
       setUploadedUrl(url);
-      toast.success("Image hosted successfully on ImgBB!");
+      toast.success("Photo uploaded successfully!");
       return url;
     } catch (err) {
-      console.error("ImgBB upload failed:", err);
+      console.error("Image upload failed:", err);
       toast.error(err.message || "Failed to upload image.");
       return null;
     } finally {
@@ -157,7 +157,7 @@ export default function AddMenuItemPage() {
             Add New Pizza Menu Item
           </h1>
           <p className="text-xs sm:text-sm text-[var(--muted-foreground)] mt-1">
-            Fill in the authentic Italian recipe details and upload a high-resolution food image via ImgBB.
+            Fill in the recipe details and upload a high-resolution food photo.
           </p>
         </div>
 
@@ -246,23 +246,21 @@ export default function AddMenuItemPage() {
             />
           </div>
 
-          {/* =================================================================
-              IMAGE UPLOAD VIA IMGBB (ASSIGNMENT REQUIREMENT)
-             ================================================================= */}
+          {/* Food Photo Upload */}
           <div className="space-y-3 pt-2 border-t border-[var(--border)]">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-semibold text-[var(--foreground)]">
-                Item Image (Required — Uploaded to ImgBB) *
+                Pizza Food Photo *
               </label>
               {uploadedUrl && (
                 <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  ImgBB Hosted
+                  Photo Ready
                 </span>
               )}
             </div>
 
-            <div className="border-2 border-dashed border-[var(--border)] hover:border-[#A92E24]/50 rounded-2xl p-6 text-center transition-all bg-[var(--background)]">
+            <div className="border-2 border-dashed border-[var(--border)] hover:border-[#E66A2C]/50 rounded-2xl p-6 text-center transition-all bg-[var(--background)]">
               {imagePreview ? (
                 <div className="space-y-3">
                   <div className="relative w-48 h-36 mx-auto rounded-xl overflow-hidden border border-[var(--border)] shadow-md">
@@ -288,30 +286,30 @@ export default function AddMenuItemPage() {
                         type="button"
                         onClick={handleUploadImage}
                         disabled={uploadingImage}
-                        className="px-4 py-1.5 rounded-lg bg-[#596B45] hover:bg-[#435234] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
+                        className="px-4 py-1.5 rounded-lg bg-[#E66A2C] hover:bg-[#D4591D] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
                       >
                         {uploadingImage ? (
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
                         ) : (
                           <Upload className="w-3.5 h-3.5" />
                         )}
-                        <span>Host on ImgBB</span>
+                        <span>Upload Photo</span>
                       </button>
                     )}
                   </div>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="w-12 h-12 rounded-full bg-[var(--muted)] text-[#A92E24] flex items-center justify-center mx-auto">
+                  <div className="w-12 h-12 rounded-full bg-[var(--muted)] text-[#E66A2C] flex items-center justify-center mx-auto">
                     <ImageIcon className="w-6 h-6" />
                   </div>
                   <p className="text-xs font-semibold text-[var(--foreground)]">
-                    Click to select an image from your device
+                    Click to select a photo from your device
                   </p>
                   <p className="text-[10px] text-[var(--muted-foreground)]">
-                    Supports JPEG, PNG, WEBP (Max 10MB). Automatically hosted on ImgBB.
+                    Supports JPEG, PNG, WEBP (Max 10MB). High-resolution recommended.
                   </p>
-                  <label className="inline-block mt-2 px-5 py-2 rounded-xl bg-[#A92E24] hover:bg-[#78231E] text-white text-xs font-semibold cursor-pointer shadow-sm">
+                  <label className="inline-block mt-2 px-5 py-2 rounded-xl bg-[#E66A2C] hover:bg-[#D4591D] text-white text-xs font-semibold cursor-pointer shadow-sm">
                     Select Pizza Image
                     <input
                       type="file"
