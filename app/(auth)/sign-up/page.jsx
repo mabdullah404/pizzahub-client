@@ -74,7 +74,21 @@ function SignUpContent() {
       }
 
       toast.success("Account created successfully! Welcome to PizzaHub.");
-      window.location.href = role === "vendor" ? "/dashboard/vendor" : "/dashboard/customer";
+      const destination = role === "vendor" ? "/dashboard/vendor" : "/dashboard/customer";
+
+      // Small grace delay ensures the browser network process commits cookies
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      // Seamless client router navigation to the user's dashboard
+      router.push(destination);
+      router.refresh();
+
+      // Fallback navigation in case client router is stalled
+      setTimeout(() => {
+        if (typeof window !== "undefined" && window.location.pathname !== destination) {
+          window.location.href = destination;
+        }
+      }, 1500);
     } catch (err) {
       console.error("Sign up exception:", err);
       toast.error(err.message || "Failed to register account.");
