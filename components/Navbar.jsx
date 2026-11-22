@@ -137,21 +137,19 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* 1. Left Column: Brand Logo (Clicks to smoothly scroll to top) */}
-            <div className="w-40 sm:w-48 shrink-0 flex items-center">
-              <Link
-                href="/"
-                onClick={handleLogoClick}
-                className="inline-flex items-center gap-2 group cursor-pointer select-none"
-                title="PizzaHub - Scroll to top"
-              >
-                <span className="font-serif font-black text-2xl tracking-tight text-[#24242A] dark:text-white flex items-center">
-                  Pizza<span className="text-[#E66A2C]">Hub</span>
-                </span>
-              </Link>
-            </div>
+            <Link
+              href="/"
+              onClick={handleLogoClick}
+              className="inline-flex items-center gap-2 group cursor-pointer select-none"
+              title="PizzaHub - Scroll to top"
+            >
+              <span className="font-serif font-black text-2xl tracking-tight text-[#24242A] dark:text-white flex items-center">
+                Pizza<span className="text-[#E66A2C]">Hub</span>
+              </span>
+            </Link>
 
-            {/* 2. Center Column: Desktop Navigation Links (Anchored to center, no jumping) */}
-            <nav className="hidden md:flex flex-1 items-center justify-center gap-8">
+            {/* 2. Center Column: Desktop Navigation Links */}
+            <nav className="hidden md:flex items-center gap-8">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
@@ -171,16 +169,12 @@ export function Navbar() {
             </nav>
 
             {/* 3. Right Column: Theme Toggle & Authentication Controls */}
-            <div className="w-40 sm:w-48 shrink-0 flex items-center justify-end gap-3">
+            <div className="flex items-center gap-3">
               {/* Theme Toggle (Always present and stable) */}
               <ThemeToggle />
 
-              {/* Desktop Auth State (Mounted & Stabilized to prevent hydration flicker) */}
-              {!mounted || isPending ? (
-                <div className="hidden md:flex items-center justify-end w-32 h-9">
-                  <div className="w-24 h-8 rounded-full bg-black/5 dark:bg-white/5 animate-pulse" />
-                </div>
-              ) : user ? (
+              {/* Desktop Auth State */}
+              {user ? (
                 <div className="hidden md:block relative ml-1" ref={dropdownRef}>
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -197,7 +191,7 @@ export function Navbar() {
                         user.name ? user.name[0] : "U"
                       )}
                     </div>
-                    <span className="inline-block max-w-[100px] truncate font-bold">
+                    <span className="inline-block max-w-[120px] truncate font-bold">
                       {user.name?.split(" ")[0] || "Account"}
                     </span>
                     <ChevronDown className="w-3.5 h-3.5 text-[#777777]" />
@@ -246,7 +240,7 @@ export function Navbar() {
                   )}
                 </div>
               ) : (
-                /* Desktop Sign In / Sign Up buttons (Strictly hidden on mobile) */
+                /* Desktop Sign In / Sign Up buttons (Exact original design) */
                 <div className="hidden md:flex items-center gap-2.5">
                   <Link
                     href="/sign-in"
