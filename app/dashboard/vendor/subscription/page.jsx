@@ -136,7 +136,7 @@ function VendorSubscriptionContent() {
             </div>
           </div>
           <Link
-            href="/dashboard/vendor/menu"
+            href="/dashboard/vendor/menu-items"
             className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition shadow-sm whitespace-nowrap flex items-center gap-1.5"
           >
             <span>Go to My Menu</span>

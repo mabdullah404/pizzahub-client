@@ -1,13 +1,13 @@
-import { requireRole } from "@/lib/core/server";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { RoleGuard } from "@/components/RoleGuard";
 
-export default async function VendorDashboardLayout({ children }) {
-  await requireRole("vendor");
-
+export default function VendorDashboardLayout({ children }) {
   return (
-    <div className="flex-1 flex flex-col lg:flex-row w-full">
-      <DashboardSidebar role="vendor" />
-      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">{children}</div>
-    </div>
+    <RoleGuard allowedRole="vendor">
+      <div className="flex-1 flex flex-col lg:flex-row w-full">
+        <DashboardSidebar role="vendor" />
+        <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">{children}</div>
+      </div>
+    </RoleGuard>
   );
 }
