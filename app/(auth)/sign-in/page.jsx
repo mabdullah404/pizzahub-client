@@ -46,17 +46,18 @@ function SignInContent() {
 
       // Determine target destination
       const userRole = data?.user?.role || "customer";
-      let destination = "/dashboard/customer";
+      let destination = `/dashboard/${userRole}`;
       if (redirectTo && redirectTo.startsWith("/")) {
-        destination = redirectTo;
-      } else if (userRole === "admin") {
-        destination = "/dashboard/admin";
-      } else if (userRole === "vendor") {
-        destination = "/dashboard/vendor";
+        // If redirectTo points to a dashboard of a different role, redirect to user's own role dashboard
+        if (redirectTo.startsWith("/dashboard/") && !redirectTo.startsWith(`/dashboard/${userRole}`)) {
+          destination = `/dashboard/${userRole}`;
+        } else {
+          destination = redirectTo;
+        }
       }
 
       // Hard navigation ensures browser commits cookies and server components load fresh session
-      window.location.href = destination;
+      window.location.replace(destination);
     } catch (err) {
       console.error("Sign in exception:", err);
       toast.error(err.message || "Sign in failed.");
@@ -151,6 +152,7 @@ function SignInContent() {
             <input
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
@@ -168,6 +170,7 @@ function SignInContent() {
             <input
               type={showPassword ? "text" : "password"}
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"

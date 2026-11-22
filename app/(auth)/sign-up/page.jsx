@@ -187,6 +187,7 @@ function SignUpContent() {
             <input
               type="text"
               required
+              autoComplete="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Marco Rossi"
@@ -206,6 +207,7 @@ function SignUpContent() {
               <input
                 type="text"
                 required
+                autoComplete="organization"
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="e.g. Bella Napoli Pizzeria"
@@ -225,6 +227,7 @@ function SignUpContent() {
             <input
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="marco@example.com"
@@ -243,6 +246,7 @@ function SignUpContent() {
             <input
               type={showPassword ? "text" : "password"}
               required
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
