@@ -10,6 +10,7 @@ import {
 } from "@/lib/api/menu-items";
 import { formatPrice } from "@/lib/utils";
 import { toast } from "sonner";
+import ConfirmModal from "@/components/ConfirmModal";
 import { getApiUrl } from "@/lib/utils/apiUrl";
 import {
   UtensilsCrossed,
@@ -32,6 +33,7 @@ export default function AdminManageMenuItemsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [actionId, setActionId] = useState(null);
+  const [pendingDeleteItem, setPendingDeleteItem] = useState(null);
 
   const fetchItems = async () => {
     try {
@@ -80,10 +82,9 @@ export default function AdminManageMenuItemsPage() {
     }
   };
 
-  const handleDelete = async (itemId) => {
-    if (!confirm("Are you sure you want to permanently delete this menu item from the platform?")) {
-      return;
-    }
+  const handleConfirmDelete = async () => {
+    if (!pendingDeleteItem) return;
+    const itemId = pendingDeleteItem._id;
 
     setActionId(itemId);
     try {
@@ -91,6 +92,7 @@ export default function AdminManageMenuItemsPage() {
       await deleteMenuItem(itemId, token);
       toast.success("Item permanently removed from catalog.");
       setItems(items.filter((i) => i._id !== itemId));
+      setPendingDeleteItem(null);
     } catch (err) {
       toast.error(err.message || "Failed to delete item.");
     } finally {
@@ -263,7 +265,7 @@ export default function AdminManageMenuItemsPage() {
                           )}
 
                           <button
-                            onClick={() => handleDelete(item._id)}
+                            onClick={() => setPendingDeleteItem(item)}
                             disabled={isActing}
                             className="p-1 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 cursor-pointer disabled:opacity-50"
                             title="Delete inappropriate item"
@@ -280,6 +282,24 @@ export default function AdminManageMenuItemsPage() {
           </div>
         </div>
       )}
+
+      {/* Professional Admin Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!pendingDeleteItem}
+        onClose={() => setPendingDeleteItem(null)}
+        onConfirm={handleConfirmDelete}
+        title="Permanently Delete Recipe?"
+        description="Are you sure you want to permanently delete this menu item from PizzaHub? This action is administrative and irreversible."
+        confirmText="Yes, Permanently Delete"
+        cancelText="Keep Item"
+        variant="delete"
+        loading={actionId === pendingDeleteItem?._id}
+        itemName={
+          pendingDeleteItem
+            ? `${pendingDeleteItem.name} • by ${pendingDeleteItem.vendorName || "Pizzeria"} (${formatPrice(pendingDeleteItem.price)})`
+            : null
+        }
+      />
     </div>
   );
 }

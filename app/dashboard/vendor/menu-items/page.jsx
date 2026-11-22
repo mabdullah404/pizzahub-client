@@ -6,6 +6,7 @@ import { useSession } from "@/lib/auth-client";
 import { getVendorMenuItems, deleteMenuItem, updateMenuItem } from "@/lib/api/menu-items";
 import { formatPrice } from "@/lib/utils";
 import { toast } from "sonner";
+import ConfirmModal from "@/components/ConfirmModal";
 import {
   UtensilsCrossed,
   PlusCircle,
@@ -25,6 +26,7 @@ export default function VendorMenuItemsPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
+  const [pendingDeleteItem, setPendingDeleteItem] = useState(null);
 
   const fetchItems = async () => {
     if (!session?.session?.token) return;
@@ -44,8 +46,9 @@ export default function VendorMenuItemsPage() {
     fetchItems();
   }, [session]);
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this menu item?")) return;
+  const handleConfirmDelete = async () => {
+    if (!pendingDeleteItem) return;
+    const id = pendingDeleteItem._id;
 
     setDeletingId(id);
     try {
@@ -53,6 +56,7 @@ export default function VendorMenuItemsPage() {
       await deleteMenuItem(id, token);
       toast.success("Menu item removed from catalog.");
       setItems(items.filter((item) => item._id !== id));
+      setPendingDeleteItem(null);
     } catch (err) {
       toast.error(err.message || "Failed to delete item.");
     } finally {
@@ -222,7 +226,7 @@ export default function VendorMenuItemsPage() {
                         </button>
 
                         <button
-                          onClick={() => handleDelete(item._id)}
+                          onClick={() => setPendingDeleteItem(item)}
                           disabled={deletingId === item._id}
                           className="p-1.5 rounded-lg border border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 cursor-pointer disabled:opacity-50"
                           title="Delete item"
@@ -242,6 +246,24 @@ export default function VendorMenuItemsPage() {
           </div>
         </div>
       )}
+
+      {/* Professional Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!pendingDeleteItem}
+        onClose={() => setPendingDeleteItem(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Menu Item?"
+        description="Are you sure you want to permanently delete this recipe from your restaurant catalog? This action cannot be reversed."
+        confirmText="Yes, Delete Recipe"
+        cancelText="Keep Item"
+        variant="delete"
+        loading={deletingId === pendingDeleteItem?._id}
+        itemName={
+          pendingDeleteItem
+            ? `${pendingDeleteItem.name} • ${formatPrice(pendingDeleteItem.price)}`
+            : null
+        }
+      />
     </div>
   );
 }

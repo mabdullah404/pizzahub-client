@@ -6,6 +6,7 @@ import { useSession } from "@/lib/auth-client";
 import { getCustomerOrders, cancelOrder } from "@/lib/api/orders";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { toast } from "sonner";
+import ConfirmModal from "@/components/ConfirmModal";
 import {
   ShoppingBag,
   Clock,
@@ -28,6 +29,7 @@ export default function CustomerOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState(null);
+  const [pendingCancelOrder, setPendingCancelOrder] = useState(null);
 
   const fetchOrders = async () => {
     if (!session?.session?.token) return;
@@ -47,8 +49,9 @@ export default function CustomerOrdersPage() {
     fetchOrders();
   }, [session]);
 
-  const handleCancelOrder = async (orderId) => {
-    if (!confirm("Are you sure you want to cancel this pending pizza order?")) return;
+  const handleConfirmCancel = async () => {
+    if (!pendingCancelOrder) return;
+    const orderId = pendingCancelOrder._id;
 
     setCancellingId(orderId);
     try {
@@ -58,6 +61,7 @@ export default function CustomerOrdersPage() {
       setOrders(
         orders.map((o) => (o._id === orderId ? { ...o, status: "cancelled" } : o))
       );
+      setPendingCancelOrder(null);
     } catch (err) {
       toast.error(err.message || "Failed to cancel order.");
     } finally {
@@ -285,7 +289,7 @@ export default function CustomerOrdersPage() {
                   {/* Customer Cancel Button (Only enabled if order is pending) */}
                   {isPending && (
                     <button
-                      onClick={() => handleCancelOrder(order._id)}
+                      onClick={() => setPendingCancelOrder(order)}
                       disabled={isCancelling}
                       className="px-4 py-2 rounded-xl border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold text-xs flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 shrink-0"
                     >
@@ -303,6 +307,24 @@ export default function CustomerOrdersPage() {
           })}
         </div>
       )}
+
+      {/* Professional Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!pendingCancelOrder}
+        onClose={() => setPendingCancelOrder(null)}
+        onConfirm={handleConfirmCancel}
+        title="Cancel Pizza Order?"
+        description="Are you sure you want to cancel this pending pizza order? This will cancel your reservation with the restaurant."
+        confirmText="Yes, Cancel Order"
+        cancelText="Keep My Order"
+        variant="danger"
+        loading={cancellingId === pendingCancelOrder?._id}
+        itemName={
+          pendingCancelOrder
+            ? `${pendingCancelOrder.itemName} • ${formatPrice(pendingCancelOrder.itemPrice)}`
+            : null
+        }
+      />
     </div>
   );
 }

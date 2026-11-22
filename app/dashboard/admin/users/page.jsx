@@ -5,6 +5,7 @@ import { useSession } from "@/lib/auth-client";
 import { getAllUsers, blockUser, unblockUser } from "@/lib/api/users";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
+import ConfirmModal from "@/components/ConfirmModal";
 import {
   Users,
   Search,
@@ -26,6 +27,7 @@ export default function AdminManageUsersPage() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [actionUserId, setActionUserId] = useState(null);
+  const [pendingUserAction, setPendingUserAction] = useState(null);
 
   const fetchUsers = async () => {
     if (!session?.session?.token) return;
@@ -53,33 +55,35 @@ export default function AdminManageUsersPage() {
     fetchUsers();
   };
 
-  const handleToggleBlock = async (user) => {
-    const isCurrentlyBlocked = user.isBlocked || user.banned;
-    const action = isCurrentlyBlocked ? "unblock" : "block";
-
+  const handlePromptToggleBlock = (user) => {
     if (user.role === "admin") {
       toast.error("Administrators cannot be blocked.");
       return;
     }
+    setPendingUserAction(user);
+  };
 
-    if (!confirm(`Are you sure you want to ${action} user "${user.name || user.email}"?`)) {
-      return;
-    }
+  const handleConfirmToggleBlock = async () => {
+    if (!pendingUserAction) return;
+    const user = pendingUserAction;
+    const isCurrentlyBlocked = user.isBlocked || user.banned;
+    const action = isCurrentlyBlocked ? "unblock" : "block";
+    const userId = user._id || user.id;
 
-    setActionUserId(user._id || user.id);
+    setActionUserId(userId);
     try {
       const token = session?.session?.token;
       if (isCurrentlyBlocked) {
-        await unblockUser(user._id || user.id, token);
+        await unblockUser(userId, token);
         toast.success(`User ${user.name || user.email} unblocked.`);
       } else {
-        await blockUser(user._id || user.id, token);
+        await blockUser(userId, token);
         toast.success(`User ${user.name || user.email} blocked.`);
       }
 
       setUsers(
         users.map((u) => {
-          if ((u._id || u.id) === (user._id || user.id)) {
+          if ((u._id || u.id) === userId) {
             return {
               ...u,
               isBlocked: !isCurrentlyBlocked,
@@ -89,6 +93,7 @@ export default function AdminManageUsersPage() {
           return u;
         })
       );
+      setPendingUserAction(null);
     } catch (err) {
       toast.error(err.message || `Failed to ${action} user.`);
     } finally {
@@ -252,7 +257,7 @@ export default function AdminManageUsersPage() {
                           </span>
                         ) : (
                           <button
-                            onClick={() => handleToggleBlock(u)}
+                            onClick={() => handlePromptToggleBlock(u)}
                             disabled={isActing}
                             className={`px-3 py-1.5 rounded-xl font-semibold text-[11px] transition-all cursor-pointer disabled:opacity-50 ${
                               isBlocked
@@ -278,6 +283,40 @@ export default function AdminManageUsersPage() {
           </div>
         </div>
       )}
+
+      {/* Professional User Block/Unblock Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!pendingUserAction}
+        onClose={() => setPendingUserAction(null)}
+        onConfirm={handleConfirmToggleBlock}
+        title={
+          pendingUserAction?.isBlocked || pendingUserAction?.banned
+            ? "Unblock User Access?"
+            : "Block User Account?"
+        }
+        description={
+          pendingUserAction?.isBlocked || pendingUserAction?.banned
+            ? `Are you sure you want to restore platform access for "${pendingUserAction?.name || pendingUserAction?.email}"? They will be able to sign in and place orders.`
+            : `Are you sure you want to block "${pendingUserAction?.name || pendingUserAction?.email}"? They will immediately lose access to their PizzaHub account and active operations.`
+        }
+        confirmText={
+          pendingUserAction?.isBlocked || pendingUserAction?.banned
+            ? "Yes, Unblock"
+            : "Yes, Block Account"
+        }
+        cancelText="Cancel"
+        variant={
+          pendingUserAction?.isBlocked || pendingUserAction?.banned
+            ? "warning"
+            : "danger"
+        }
+        loading={actionUserId === (pendingUserAction?._id || pendingUserAction?.id)}
+        itemName={
+          pendingUserAction
+            ? `${pendingUserAction.name || "User"} (${pendingUserAction.email}) • Role: ${pendingUserAction.role}`
+            : null
+        }
+      />
     </div>
   );
 }
