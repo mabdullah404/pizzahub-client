@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "@/lib/auth-client";
-import { getAllUsers, blockUser, unblockUser } from "@/lib/api/users";
+import { getAllUsers, blockUser, unblockUser, approveVendor, rejectVendor } from "@/lib/api/users";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import ConfirmModal from "@/components/ConfirmModal";
@@ -14,10 +14,14 @@ import {
   ShieldCheck,
   Ban,
   CheckCircle2,
+  Clock,
+  XCircle,
   Loader2,
   User,
   ChefHat,
   ShoppingBag,
+  Check,
+  X,
 } from "lucide-react";
 
 export default function AdminManageUsersPage() {
@@ -28,16 +32,22 @@ export default function AdminManageUsersPage() {
   const [roleFilter, setRoleFilter] = useState("all");
   const [actionUserId, setActionUserId] = useState(null);
   const [pendingUserAction, setPendingUserAction] = useState(null);
+  const [pendingVendorAction, setPendingVendorAction] = useState(null); // { user, type: 'approve' | 'reject' }
 
   const fetchUsers = async () => {
     if (!session?.session?.token) return;
     try {
       setLoading(true);
+      const apiRole = roleFilter === "pending_vendor" ? "vendor" : roleFilter;
       const res = await getAllUsers(
-        { search, role: roleFilter },
+        { search, role: apiRole },
         session.session.token
       );
-      setUsers(res.data || []);
+      let list = res.data || [];
+      if (roleFilter === "pending_vendor") {
+        list = list.filter((u) => u.status === "pending" || u.isApproved === false);
+      }
+      setUsers(list);
     } catch (err) {
       console.error("Failed to load users:", err);
       toast.error(err.message || "Failed to load user list.");
@@ -53,6 +63,45 @@ export default function AdminManageUsersPage() {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     fetchUsers();
+  };
+
+  const handleConfirmVendorAction = async () => {
+    if (!pendingVendorAction) return;
+    const { user, type } = pendingVendorAction;
+    const userId = user._id || user.id;
+
+    setActionUserId(userId);
+    try {
+      const token = session?.session?.token;
+      if (type === "approve") {
+        await approveVendor(userId, token);
+        toast.success(`Pizzeria "${user.businessName || user.name}" approved successfully!`);
+        setUsers(
+          users.map((u) => {
+            if ((u._id || u.id) === userId) {
+              return { ...u, status: "approved", isApproved: true };
+            }
+            return u;
+          })
+        );
+      } else {
+        await rejectVendor(userId, token);
+        toast.success(`Vendor "${user.name || user.email}" rejected.`);
+        setUsers(
+          users.map((u) => {
+            if ((u._id || u.id) === userId) {
+              return { ...u, status: "rejected", isApproved: false };
+            }
+            return u;
+          })
+        );
+      }
+      setPendingVendorAction(null);
+    } catch (err) {
+      toast.error(err.message || `Failed to ${type} vendor.`);
+    } finally {
+      setActionUserId(null);
+    }
   };
 
   const handlePromptToggleBlock = (user) => {
@@ -137,11 +186,12 @@ export default function AdminManageUsersPage() {
         <select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
-          className="w-full sm:w-44 px-3 py-2 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs text-[var(--foreground)] focus:outline-none"
+          className="w-full sm:w-48 px-3 py-2 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs text-[var(--foreground)] focus:outline-none"
         >
           <option value="all">All Roles</option>
           <option value="customer">Customers</option>
-          <option value="vendor">Vendors (Restaurants)</option>
+          <option value="vendor">Vendors (All Restaurants)</option>
+          <option value="pending_vendor">Pending Vendors (Need Approval)</option>
           <option value="admin">Administrators</option>
         </select>
       </div>
@@ -238,6 +288,23 @@ export default function AdminManageUsersPage() {
                             <Ban className="w-3 h-3" />
                             Blocked
                           </span>
+                        ) : u.role === "vendor" ? (
+                          u.status === "pending" || u.isApproved === false ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300">
+                              <Clock className="w-3 h-3" />
+                              Pending Approval
+                            </span>
+                          ) : u.status === "rejected" ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300">
+                              <XCircle className="w-3 h-3" />
+                              Rejected
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
+                              <CheckCircle2 className="w-3 h-3" />
+                              Approved Partner
+                            </span>
+                          )
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
                             <CheckCircle2 className="w-3 h-3" />
@@ -256,23 +323,48 @@ export default function AdminManageUsersPage() {
                             Protected Admin
                           </span>
                         ) : (
-                          <button
-                            onClick={() => handlePromptToggleBlock(u)}
-                            disabled={isActing}
-                            className={`px-3 py-1.5 rounded-xl font-semibold text-[11px] transition-all cursor-pointer disabled:opacity-50 ${
-                              isBlocked
-                                ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
-                                : "border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20"
-                            }`}
-                          >
-                            {isActing ? (
-                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            ) : isBlocked ? (
-                              "Unblock User"
-                            ) : (
-                              "Block User"
+                          <div className="flex items-center justify-end gap-2">
+                            {u.role === "vendor" && (u.status === "pending" || u.isApproved === false) && (
+                              <>
+                                <button
+                                  onClick={() => setPendingVendorAction({ user: u, type: "approve" })}
+                                  disabled={isActing}
+                                  className="px-2.5 py-1.5 rounded-xl bg-[#596B45] hover:bg-[#435234] text-white font-semibold text-[11px] flex items-center gap-1 shadow-xs transition-all cursor-pointer disabled:opacity-50"
+                                  title="Approve Pizzeria Partner"
+                                >
+                                  <Check className="w-3 h-3" />
+                                  <span>Approve Vendor</span>
+                                </button>
+                                <button
+                                  onClick={() => setPendingVendorAction({ user: u, type: "reject" })}
+                                  disabled={isActing}
+                                  className="px-2 py-1.5 rounded-xl border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold text-[11px] flex items-center gap-1 transition-all cursor-pointer disabled:opacity-50"
+                                  title="Reject Pizzeria Partner"
+                                >
+                                  <X className="w-3 h-3" />
+                                  <span>Reject</span>
+                                </button>
+                              </>
                             )}
-                          </button>
+
+                            <button
+                              onClick={() => handlePromptToggleBlock(u)}
+                              disabled={isActing}
+                              className={`px-3 py-1.5 rounded-xl font-semibold text-[11px] transition-all cursor-pointer disabled:opacity-50 ${
+                                isBlocked
+                                  ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+                                  : "border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20"
+                              }`}
+                            >
+                              {isActing ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              ) : isBlocked ? (
+                                "Unblock User"
+                              ) : (
+                                "Block User"
+                              )}
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>
@@ -314,6 +406,36 @@ export default function AdminManageUsersPage() {
         itemName={
           pendingUserAction
             ? `${pendingUserAction.name || "User"} (${pendingUserAction.email}) • Role: ${pendingUserAction.role}`
+            : null
+        }
+      />
+
+      {/* Professional Vendor Partner Approval Modal */}
+      <ConfirmModal
+        isOpen={!!pendingVendorAction}
+        onClose={() => setPendingVendorAction(null)}
+        onConfirm={handleConfirmVendorAction}
+        title={
+          pendingVendorAction?.type === "approve"
+            ? "Approve Pizzeria Partner?"
+            : "Reject Vendor Application?"
+        }
+        description={
+          pendingVendorAction?.type === "approve"
+            ? `Grant verified pizzeria status to "${pendingVendorAction?.user?.businessName || pendingVendorAction?.user?.name}". They will be able to publish artisan pizzas and fulfill customer orders.`
+            : `Reject vendor application for "${pendingVendorAction?.user?.name || pendingVendorAction?.user?.email}". They will not be able to publish menu items.`
+        }
+        confirmText={
+          pendingVendorAction?.type === "approve"
+            ? "Yes, Approve Vendor"
+            : "Yes, Reject Application"
+        }
+        cancelText="Cancel"
+        variant={pendingVendorAction?.type === "approve" ? "warning" : "danger"}
+        loading={actionUserId === (pendingVendorAction?.user?._id || pendingVendorAction?.user?.id)}
+        itemName={
+          pendingVendorAction?.user
+            ? `${pendingVendorAction.user.businessName ? `"${pendingVendorAction.user.businessName}" • ` : ""}${pendingVendorAction.user.name || "Vendor"} (${pendingVendorAction.user.email})`
             : null
         }
       />

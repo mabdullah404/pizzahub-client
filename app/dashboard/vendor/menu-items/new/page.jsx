@@ -92,6 +92,11 @@ export default function AddMenuItemPage() {
       return;
     }
 
+    if (session?.user?.status === "pending" || session?.user?.isApproved === false) {
+      toast.error("Your vendor account is pending admin approval. You cannot submit new menu items yet.");
+      return;
+    }
+
     if (!imageFile && !uploadedUrl) {
       toast.error("Menu image is required. Please select an image file.");
       return;

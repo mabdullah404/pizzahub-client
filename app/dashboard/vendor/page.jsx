@@ -50,6 +50,28 @@ export default function VendorDashboardOverview() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
+      {/* Pending Admin Review Notice Banner */}
+      {(session?.user?.status === "pending" || session?.user?.isApproved === false) && (
+        <div className="p-5 sm:p-6 rounded-3xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+              <Clock className="w-5 h-5 animate-pulse" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-amber-900 dark:text-amber-200">
+                Pizzeria Application Under Administrative Review
+              </h3>
+              <p className="text-xs text-amber-700 dark:text-amber-300/80 mt-0.5">
+                Your restaurant partner account is pending admin approval. You will receive full catalog publishing and dispatch rights once an administrator approves your pizzeria.
+              </p>
+            </div>
+          </div>
+          <span className="px-3.5 py-1.5 rounded-full text-[11px] font-bold bg-amber-200/80 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 shrink-0">
+            Pending Admin Permission
+          </span>
+        </div>
+      )}
+
       {/* Top Banner Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-[var(--card)] border border-[var(--border)] shadow-sm">
         <div>

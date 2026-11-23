@@ -24,12 +24,16 @@ export async function GET(request, context) {
 export async function POST(request, context) {
   try {
     const url = request.url || "";
+    let signUpRole = null;
+    let signUpEmail = null;
 
     // 1. Enforce strict Sign Up validation (Challenge / Security requirement)
     if (url.includes("/sign-up/email")) {
       try {
         const cloned = request.clone();
         const body = await cloned.json();
+        signUpRole = body.role || "customer";
+        signUpEmail = body.email ? String(body.email).trim().toLowerCase() : null;
 
         // Enforce role validation: reject role: "admin" or unknown roles
         if (body.role && body.role !== "customer" && body.role !== "vendor") {
@@ -96,7 +100,30 @@ export async function POST(request, context) {
       }
     }
 
-    return await handlers.POST(request, context);
+    const response = await handlers.POST(request, context);
+
+    // If new user signed up successfully, ensure correct approval status in DB
+    if (response.ok && url.includes("/sign-up/email") && signUpEmail) {
+      try {
+        const isVendor = signUpRole === "vendor";
+        await mongoClient
+          .db(process.env.DB_NAME || "pizzaHubDB")
+          .collection("user")
+          .updateOne(
+            { email: signUpEmail },
+            {
+              $set: {
+                status: isVendor ? "pending" : "approved",
+                isApproved: !isVendor,
+              },
+            }
+          );
+      } catch (postSyncErr) {
+        console.warn("⚠️ [PostSignUpSync] Non-blocking status sync error:", postSyncErr.message);
+      }
+    }
+
+    return response;
   } catch (err) {
     console.error("[AUTH_POST_ERROR]", err);
     return new Response(
